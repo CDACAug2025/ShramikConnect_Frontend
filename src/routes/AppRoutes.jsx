@@ -15,6 +15,9 @@ import KycPendingPage from '../modules/auth/pages/KycPendingPage';
 import UsersPage from '../modules/admin/pages/UsersPage';
 import MonitoringPage from '../modules/admin/pages/MonitoringPage';
 import InventoryPage from '../modules/admin/pages/InventoryPage';
+import PaymentsPage from '../modules/admin/pages/PaymentsPage';
+import SubscriptionsPage from '../modules/admin/pages/SubscriptionsPage';
+import SettingsPage from '../modules/admin/pages/SettingsPage';
 
 const AppRoutes = () => {
   return (
@@ -35,6 +38,9 @@ const AppRoutes = () => {
         <Route path="/admin/users" element={<MainLayout><UsersPage /></MainLayout>} />
         <Route path="/admin/monitoring" element={<MainLayout><MonitoringPage /></MainLayout>} />
         <Route path="/admin/inventory" element={<MainLayout><InventoryPage /></MainLayout>} />
+        <Route path="/admin/payments" element={<MainLayout><PaymentsPage /></MainLayout>} />
+        <Route path="/admin/subscriptions" element={<MainLayout><SubscriptionsPage /></MainLayout>} />
+        <Route path="/admin/settings" element={<MainLayout><SettingsPage /></MainLayout>} />
 
       </Routes>
     </BrowserRouter>

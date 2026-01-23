@@ -1,7 +1,7 @@
 import React from 'react';
 import useUserManagement from '../hooks/useUserManagement';
 
-// --- FIX: Import the correct file name (AdminUserTable) ---
+
 import AdminUserTable from '../components/AdminUserTable.jsx'; 
 
 const UsersPage = () => {

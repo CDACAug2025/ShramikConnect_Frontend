@@ -1,9 +1,9 @@
-import React from 'react'; // Ensure React is imported
+import React from 'react'; 
 import AppNavbar from '../components/AppNavbar';
 import AppFooter from '../components/AppFooter';
-// You can remove 'Outlet' since you aren't using nested routing here
 
-// 1. Add { children } here to accept the page component
+
+
 const MainLayout = ({ children }) => {
   return (
     <div className="d-flex flex-column min-vh-100">
