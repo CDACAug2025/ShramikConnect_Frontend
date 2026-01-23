@@ -1,58 +1,54 @@
 import { useState, useEffect } from 'react';
-import { fetchProducts, addProduct, deleteProduct, updateProduct } from '../services/inventoryApi';
+import { fetchProducts, fetchOrders, addProduct, deleteProduct, updateProduct } from '../services/inventoryApi';
 
 const useInventory = () => {
   const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]); // New State for Orders
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadProducts();
+    loadData();
   }, []);
 
-  const loadProducts = async () => {
+  const loadData = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const data = await fetchProducts();
-      setProducts(data);
+      const [prodData, orderData] = await Promise.all([
+        fetchProducts(),
+        fetchOrders()
+      ]);
+      setProducts(prodData);
+      setOrders(orderData);
     } catch (err) {
-      setError("Failed to load inventory.");
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleAddProduct = async (newProduct) => {
-    try {
-      const res = await addProduct(newProduct);
-      setProducts([...products, { ...newProduct, id: res.id, status: newProduct.stock > 0 ? "In Stock" : "Out of Stock" }]);
-    } catch (err) {
-      alert("Failed to add product");
-    }
+    // Simulate Image Upload (use placeholder if no image)
+    const productWithImage = { 
+      ...newProduct, 
+      image: "https://via.placeholder.com/40" 
+    };
+    
+    const res = await addProduct(productWithImage);
+    setProducts([...products, { ...productWithImage, id: res.id }]);
   };
 
   const handleDeleteProduct = async (id) => {
-    if (!window.confirm("Are you sure you want to remove this item?")) return;
-    try {
-      await deleteProduct(id);
-      setProducts(products.filter(p => p.id !== id));
-    } catch (err) {
-      alert("Failed to delete product");
-    }
+    if (!window.confirm("Remove this item?")) return;
+    await deleteProduct(id);
+    setProducts(products.filter(p => p.id !== id));
   };
 
   const handleUpdateStock = async (id, newStock) => {
-    try {
-      await updateProduct(id, { stock: newStock });
-      setProducts(products.map(p => 
-        p.id === id ? { ...p, stock: newStock, status: newStock > 0 ? "In Stock" : "Out of Stock" } : p
-      ));
-    } catch (err) {
-      console.error("Update failed");
-    }
+    await updateProduct(id, { stock: newStock });
+    setProducts(products.map(p => p.id === id ? { ...p, stock: newStock } : p));
   };
 
-  return { products, loading, error, handleAddProduct, handleDeleteProduct, handleUpdateStock };
+  return { products, orders, loading, handleAddProduct, handleDeleteProduct, handleUpdateStock };
 };
 
 export default useInventory;

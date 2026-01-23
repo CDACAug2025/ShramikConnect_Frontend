@@ -2,8 +2,13 @@ import React from 'react';
 
 const AdminUserTable = ({ users, onStatusChange, onRoleChange }) => {
   if (!users || users.length === 0) {
-    return <div className="alert alert-info text-center m-4">No users found.</div>;
+    return <div className="alert alert-warning text-center m-4">No users match your search.</div>;
   }
+
+  const handleViewProfile = (user) => {
+    // Placeholder for View Profile Modal
+    alert(`Showing full profile for: ${user.name}\nRole: ${user.role}\nEmail: ${user.email}`);
+  };
 
   return (
     <div className="card shadow border-0 rounded-3 overflow-hidden">
@@ -11,22 +16,18 @@ const AdminUserTable = ({ users, onStatusChange, onRoleChange }) => {
         <table className="table table-hover align-middle mb-0">
           <thead className="bg-light">
             <tr>
-              <th className="ps-4 py-3 text-secondary text-uppercase small fw-bold">User</th>
-              <th className="py-3 text-secondary text-uppercase small fw-bold">Role</th>
-              <th className="py-3 text-secondary text-uppercase small fw-bold">Status</th>
-              <th className="pe-4 py-3 text-end text-secondary text-uppercase small fw-bold">Actions</th>
+              <th className="ps-4 py-3 small fw-bold text-uppercase text-secondary">User</th>
+              <th className="py-3 small fw-bold text-uppercase text-secondary">Role</th>
+              <th className="py-3 small fw-bold text-uppercase text-secondary">Status</th>
+              <th className="pe-4 py-3 text-end small fw-bold text-uppercase text-secondary">Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
-                {/* User Name & Email */}
-                <td className="ps-4 py-3">
+                <td className="ps-4">
                   <div className="d-flex align-items-center">
-                    <div 
-                      className="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center fw-bold me-3"
-                      style={{ width: '40px', height: '40px' }}
-                    >
+                    <div className="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center fw-bold me-3" style={{ width: '40px', height: '40px' }}>
                       {user.name.charAt(0)}
                     </div>
                     <div>
@@ -35,14 +36,12 @@ const AdminUserTable = ({ users, onStatusChange, onRoleChange }) => {
                     </div>
                   </div>
                 </td>
-
-                {/* Role Dropdown */}
                 <td>
-                  <select
-                    className="form-select form-select-sm border-0 bg-light fw-medium text-dark"
-                    style={{ width: '130px', cursor: 'pointer' }}
-                    value={user.role}
+                  <select 
+                    className="form-select form-select-sm border-0 bg-light fw-medium" 
+                    value={user.role} 
                     onChange={(e) => onRoleChange(user.id, e.target.value)}
+                    style={{ width: '130px' }}
                   >
                     <option value="Worker">Worker</option>
                     <option value="Client">Client</option>
@@ -50,37 +49,35 @@ const AdminUserTable = ({ users, onStatusChange, onRoleChange }) => {
                     <option value="Supervisor">Supervisor</option>
                   </select>
                 </td>
-
-                {/* Status Badge */}
                 <td>
-                  <span
-                    className={`badge rounded-pill px-3 py-2 ${
-                      user.status === 'Active' ? 'bg-success bg-opacity-10 text-success' :
-                      user.status === 'Blocked' ? 'bg-danger bg-opacity-10 text-danger' :
-                      'bg-warning bg-opacity-10 text-warning'
-                    }`}
-                  >
+                  <span className={`badge rounded-pill px-3 py-2 ${
+                    user.status === 'Active' ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger'
+                  }`}>
                     {user.status}
                   </span>
                 </td>
-
-                {/* Actions */}
                 <td className="pe-4 text-end">
-                  {user.status === 'Blocked' ? (
-                    <button
-                      onClick={() => onStatusChange(user.id, 'Active')}
-                      className="btn btn-sm btn-success fw-bold px-3"
+                  <div className="btn-group">
+                    {/* View Profile Button */}
+                    <button 
+                      className="btn btn-sm btn-light border text-muted" 
+                      onClick={() => handleViewProfile(user)}
+                      title="View Details"
                     >
-                      Activate
+                      👁️
                     </button>
-                  ) : (
-                    <button
-                      onClick={() => onStatusChange(user.id, 'Blocked')}
-                      className="btn btn-sm btn-outline-danger fw-bold px-3"
-                    >
-                      Block
-                    </button>
-                  )}
+
+                    {/* Block/Activate Button */}
+                    {user.status === 'Blocked' ? (
+                      <button onClick={() => onStatusChange(user.id, 'Active')} className="btn btn-sm btn-success fw-bold">
+                        Activate
+                      </button>
+                    ) : (
+                      <button onClick={() => onStatusChange(user.id, 'Blocked')} className="btn btn-sm btn-outline-danger fw-bold">
+                        Block
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

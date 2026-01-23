@@ -23,18 +23,11 @@ const useSubscriptions = () => {
     }
   };
 
-  const handleUpdatePrice = async (id, newPrice) => {
-    await updatePlan(id, { price: newPrice });
-    setPlans(plans.map(p => p.id === id ? { ...p, price: newPrice } : p));
-  };
-
-  const handleToggleStatus = async (id) => {
-    // Find current status and toggle it
-    const plan = plans.find(p => p.id === id);
-    const newStatus = !plan.isActive;
-    
-    await updatePlan(id, { isActive: newStatus });
-    setPlans(plans.map(p => p.id === id ? { ...p, isActive: newStatus } : p));
+  // --- UPDATED: Generic Update Function ---
+  const handleUpdatePlan = async (id, updates) => {
+    // Optimistic Update
+    setPlans(plans.map(p => p.id === id ? { ...p, ...updates } : p));
+    await updatePlan(id, updates);
   };
 
   const handleCreatePlan = async (planData) => {
@@ -42,7 +35,7 @@ const useSubscriptions = () => {
     setPlans([...plans, { ...planData, id: res.id, isActive: true }]);
   };
 
-  return { plans, subscriptions, loading, handleUpdatePrice, handleToggleStatus, handleCreatePlan };
+  return { plans, subscriptions, loading, handleUpdatePlan, handleCreatePlan };
 };
 
 export default useSubscriptions;
