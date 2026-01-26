@@ -1,14 +1,17 @@
+import React from 'react'; 
 import AppNavbar from '../components/AppNavbar';
 import AppFooter from '../components/AppFooter';
-import { Outlet } from 'react-router-dom';
 
-const MainLayout = () => {
+
+
+const MainLayout = ({ children }) => {
   return (
     <div className="d-flex flex-column min-vh-100">
       <AppNavbar />
 
       <main className="flex-fill">
-        <Outlet />
+        {/* 2. Render {children} instead of <Outlet /> */}
+        {children}
       </main>
 
       <AppFooter />
