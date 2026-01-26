@@ -11,13 +11,13 @@ const RegisterForm = () => {
     const data = new FormData(e.target);
 
     const payload = {
-      name: data.get('name'),
-      email: data.get('email'),
-      phone: data.get('phone'),
-      password: data.get('password'),
-      role: data.get('role'),
-      district: data.get('district'),
-    };
+  fullName: data.get('name'),  
+  email: data.get('email'),
+  phone: data.get('phone'),
+  password: data.get('password'),
+  role: data.get('role'),
+};
+
 
     try {
       setLoading(true);
@@ -80,14 +80,7 @@ const RegisterForm = () => {
         </Form.Select>
       </Form.Group>
 
-      {/* District */}
-      <Form.Group className="mb-3">
-        <Form.Control
-          name="district"
-          placeholder="District (e.g. Pune)"
-          required
-        />
-      </Form.Group>
+      
 
       <Button
         type="submit"
