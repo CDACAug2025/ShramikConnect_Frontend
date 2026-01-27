@@ -8,6 +8,19 @@ import KycListPage from '@/modules/kyc/pages/KycListPage';
 import KycPendingPage from '@/modules/kyc/pages/KycPendingPage';
 import { DisputesPage } from '../modules/disputes'; 
 
+// Client Dashboard Pages
+import ClientProfile from '../modules/dashboard/client/pages/ClientProfile';
+import ClientDashboardPage from '../modules/dashboard/client/pages/ClientDashboardPage';
+import PostJob from '../modules/dashboard/client/pages/PostJob';
+import MyJobs from '../modules/dashboard/client/pages/MyJobs';
+import WorkerApplications from '../modules/dashboard/client/pages/WorkerApplications';
+import JobProgress from '../modules/dashboard/client/pages/JobProgress';
+import Contract from '../modules/dashboard/client/pages/Contract';
+import EscrowPayment from '../modules/dashboard/client/pages/EscrowPayment';
+import JobHistory from '../modules/dashboard/client/pages/JobHistory';
+import Chat from '../modules/dashboard/client/pages/Chat';
+import Notifications from '../modules/dashboard/client/pages/Notifications';
+import Dispute from '../modules/dashboard/client/pages/Dispute';
 
 // --- Admin Imports ---
 import UsersPage from '../modules/admin/pages/UsersPage';
@@ -39,6 +52,20 @@ const AppRoutes = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/kyc-pending" element={<KycPendingPage />} />
+          
+          {/* CLIENT DASHBOARD ROUTES */}
+          <Route path="/client/dashboard" element={<ClientDashboardPage />} />
+          <Route path="/client/profile" element={<ClientProfile />} />
+          <Route path="/client/post-job" element={<PostJob />} />
+          <Route path="/client/my-jobs" element={<MyJobs />} />
+          <Route path="/client/applications" element={<WorkerApplications />} />
+          <Route path="/client/job-progress" element={<JobProgress />} />
+          <Route path="/client/contract" element={<Contract />} />
+          <Route path="/client/escrow" element={<EscrowPayment />} />
+          <Route path="/client/history" element={<JobHistory />} />
+          <Route path="/client/chat" element={<Chat />} />
+          <Route path="/client/notifications" element={<Notifications />} />
+          <Route path="/client/dispute" element={<Dispute />} />
           <Route path="/supervisor/dashboard" element={<SupervisorDashboardPage />} />
           <Route path="/supervisor/kyc-list" element={<KycListPage />} />
           <Route path='/supervisor/disputes' element={<DisputesPage />} />
