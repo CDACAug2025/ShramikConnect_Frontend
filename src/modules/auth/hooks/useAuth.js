@@ -20,7 +20,7 @@ export const useAuth = () => {
           window.location.href = '/dashboard/worker';
           break;
         case 'CLIENT':
-          window.location.href = '/dashboard/client';
+          window.location.href = '/client/dashboard';
           break;
         case 'ORGANIZATION':
           window.location.href = '/dashboard/organization';

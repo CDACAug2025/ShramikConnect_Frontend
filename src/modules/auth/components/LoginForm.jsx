@@ -9,7 +9,7 @@ const LoginForm = () => {
     const data = new FormData(e.target);
 
     login({
-      username: data.get('username'),
+      email: data.get('username'),
       password: data.get('password'),
     });
   };
