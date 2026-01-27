@@ -1,3 +1,4 @@
+import React from 'react'; 
 import AppNavbar from '../components/AppNavbar';
 import ClientNavbar from '../../modules/dashboard/client/components/ClientNavbar';
 import AppFooter from '../components/AppFooter';
@@ -12,7 +13,8 @@ const MainLayout = () => {
       {isClientRoute ? <ClientNavbar /> : <AppNavbar />}
 
       <main className="flex-fill">
-        <Outlet />
+        {/* 2. Render {children} instead of <Outlet /> */}
+        {children}
       </main>
 
       <AppFooter />
