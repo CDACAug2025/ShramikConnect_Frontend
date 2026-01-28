@@ -10,6 +10,15 @@ export const useAuth = () => {
   const login = async (credentials) => {
     try {
       setLoading(true);
+      // const response = await loginApi(credentials);
+      // saveToken(response.token);
+      
+      // // Store user data in localStorage
+      // localStorage.setItem('userRole', response.role);
+      // localStorage.setItem('userId', response.userId);
+      // localStorage.setItem('userName', response.fullName);
+      
+      // console.log('Stored role:', response.role); // Debug log
 
       const data = await loginApi(credentials);
        
@@ -37,6 +46,10 @@ export const useAuth = () => {
           break;
         case 'ORGANIZATION':
           navigate('/dashboard/organization');
+        //   window.location.href = '/client/dashboard';
+        //   break;
+        // case 'ORGANIZATION':
+        //   window.location.href = '/organization/home';
           break;
         case 'SUPERVISOR':
           navigate('/supervisor/dashboard');
