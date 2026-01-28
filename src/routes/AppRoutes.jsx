@@ -2,6 +2,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MainLayout from '../shared/layouts/MainLayout';
 import { LoginPage, RegisterPage, KycPendingPage } from '@/modules/auth';
 import { HomePage, AboutPage, ContactPage } from '@/modules/home';
+import OrganizationDashboard from '../modules/dashboard/organization/pages/OrganizationDashboard';
+import OrganizationProfile from '../modules/dashboard/organization/pages/OrganizationProfile';
+import OrganizationHome from '../modules/dashboard/organization/pages/OrganizationHome';
+import OrganizationPostJob from '../modules/dashboard/organization/pages/PostJob';
+
 
 // Client Dashboard Pages
 import ClientProfile from '../modules/dashboard/client/pages/ClientProfile';
@@ -28,6 +33,13 @@ const AppRoutes = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/kyc-pending" element={<KycPendingPage />} />
+          
+          {/* ORGANIZATION DASHBOARD ROUTES */}
+          <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
+          <Route path="/organization/home" element={<OrganizationHome />} />
+          <Route path="/organization/profile" element={<OrganizationProfile />} />
+          <Route path="/organization/post-job" element={<OrganizationPostJob />} />
+
           
           {/* CLIENT DASHBOARD ROUTES */}
           <Route path="/client/dashboard" element={<ClientDashboardPage />} />

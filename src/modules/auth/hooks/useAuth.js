@@ -10,6 +10,13 @@ export const useAuth = () => {
       setLoading(true);
       const response = await loginApi(credentials);
       saveToken(response.token);
+      
+      // Store user data in localStorage
+      localStorage.setItem('userRole', response.role);
+      localStorage.setItem('userId', response.userId);
+      localStorage.setItem('userName', response.fullName);
+      
+      console.log('Stored role:', response.role); // Debug log
 
       if (response.kycStatus === 'PENDING') {
         window.location.href = '/kyc-pending';
@@ -23,7 +30,7 @@ export const useAuth = () => {
           window.location.href = '/client/dashboard';
           break;
         case 'ORGANIZATION':
-          window.location.href = '/dashboard/organization';
+          window.location.href = '/organization/home';
           break;
         case 'SUPERVISOR':
           window.location.href = '/dashboard/supervisor';
