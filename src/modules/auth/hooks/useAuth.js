@@ -1,7 +1,9 @@
+// hooks/useAuth.js
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginApi } from '../services/authApi';
 import { saveToken, clearToken } from '@/shared/utils/tokenUtils';
+import { clearAuth } from '@/shared/utils/authUtils';
 
 export const useAuth = () => {
   const [loading, setLoading] = useState(false);
@@ -10,33 +12,24 @@ export const useAuth = () => {
   const login = async (credentials) => {
     try {
       setLoading(true);
-      // const response = await loginApi(credentials);
-      // saveToken(response.token);
-      
-      // // Store user data in localStorage
-      // localStorage.setItem('userRole', response.role);
-      // localStorage.setItem('userId', response.userId);
-      // localStorage.setItem('userName', response.fullName);
-      
-      // console.log('Stored role:', response.role); // Debug log
 
       const data = await loginApi(credentials);
-       
 
+      // 🔐 SAVE TOKEN
       saveToken(data.token);
 
-      // status check
-      if (data.accountStatus !== 'ACTIVE'){navigate('/kyc-pending'); return;};
+      // 👤 SAVE USER DATA (CRITICAL)
+      localStorage.setItem('userRole', data.role);
+      localStorage.setItem('userName', data.fullName || '');
+      localStorage.setItem('userId', data.userId);
 
+      // 🚦 ACCOUNT STATUS CHECK
+      if (data.accountStatus !== 'ACTIVE') {
+        navigate('/kyc-pending');
+        return;
+      }
 
-      // // 🚦 KYC CHECK
-      // if (data.kycStatus === 'PENDING') {
-      //   navigate('/kyc-pending');
-      //   return;
-      // }
-
-      // 🚦 ROLE-BASED REDIRECT
-      console.log('User Role:', data.role);
+      // 🚀 ROLE BASED REDIRECT
       switch (data.role) {
         case 'WORKER':
           navigate('/dashboard/worker');
@@ -46,10 +39,6 @@ export const useAuth = () => {
           break;
         case 'ORGANIZATION':
           navigate('/dashboard/organization');
-        //   window.location.href = '/client/dashboard';
-        //   break;
-        // case 'ORGANIZATION':
-        //   window.location.href = '/organization/home';
           break;
         case 'SUPERVISOR':
           navigate('/supervisor/dashboard');
@@ -57,7 +46,6 @@ export const useAuth = () => {
         default:
           navigate('/');
       }
-
     } catch (err) {
       alert('Invalid credentials');
     } finally {
@@ -67,6 +55,7 @@ export const useAuth = () => {
 
   const logout = () => {
     clearToken();
+    clearAuth();
     navigate('/login');
   };
 
