@@ -7,3 +7,15 @@ export const getClientProfile = () => {
 export const updateClientProfile = (data) => {
   return axios.put("/client/profile/update", data);
 };
+
+
+export const deleteClientAccount = () => {
+  return axios.delete("/client/profile/delete");
+};
+
+/*
+export const deleteClientAccount = () => {
+  return axiosInstance.delete("/api/client/profile/block");
+};
+*/
+

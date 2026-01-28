@@ -1,25 +1,26 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useClientProfile } from "../hooks/useClientProfile";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const ClientProfile = () => {
-  const { profile, loading, saveProfile } = useClientProfile();
+  const { profile, loading, saveProfile, deleteAccount } = useClientProfile();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: "",
-    email: "",
     mobile: "",
     district: "",
-    bankAccount: ""
+    address: ""
   });
 
   useEffect(() => {
     if (profile) {
       setForm({
         name: profile.name,
-        email: profile.email,
         mobile: profile.mobile,
         district: profile.district,
-        bankAccount: profile.bankAccount
+        address: profile.address
       });
     }
   }, [profile]);
@@ -33,83 +34,65 @@ const ClientProfile = () => {
     toast.success("Profile updated successfully");
   };
 
-  if (loading) return <div className="container mt-4"><p>Loading...</p></div>;
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure? Your account will be blocked.")) return;
+    await deleteAccount();
+    toast.success("Account blocked");
+    navigate("/login");
+  };
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div className="container mt-4">
-      <div className="row justify-content-center">
-        <div className="col-md-6">
-          <h2 className="mb-4">Client Profile Management</h2>
-          
-          <div className="card">
-            <div className="card-body">
-              <div className="mb-3">
-                <input
-                  className="form-control"
-                  name="name"
-                  placeholder="Full Name"
-                  value={form.name}
-                  onChange={handleChange}
-                />
-              </div>
-              
-              <div className="mb-3">
-                <input
-                  className="form-control"
-                  name="email"
-                  placeholder="Email"
-                  value={form.email}
-                  onChange={handleChange}
-                />
-              </div>
-              
-              <div className="mb-3">
-                <input
-                  className="form-control"
-                  name="mobile"
-                  placeholder="Mobile Number"
-                  value={form.mobile}
-                  onChange={handleChange}
-                />
-              </div>
-              
-              <div className="mb-3">
-                <input
-                  className="form-control"
-                  name="district"
-                  placeholder="District"
-                  value={form.district}
-                  onChange={handleChange}
-                />
-              </div>
-              
-              <div className="mb-3">
-                <input
-                  className="form-control"
-                  name="bankAccount"
-                  placeholder="Bank / Payment Details"
-                  value={form.bankAccount}
-                  onChange={handleChange}
-                />
-              </div>
-              
-              <p className="text-muted small">
-                KYC Status: {" "}
-                <span className={profile?.kycVerified ? "text-success" : "text-danger"}>
-                  <strong>{profile?.kycVerified ? "Verified" : "Pending"}</strong>
-                </span>
-              </p>
-              
-              <button
-                onClick={handleSubmit}
-                className="btn btn-primary"
-              >
-                Update Profile
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <h2>Client Profile</h2>
+
+      <input
+        className="form-control mb-2"
+        name="name"
+        placeholder="Full Name"
+        value={form.name}
+        onChange={handleChange}
+      />
+
+      <input
+        className="form-control mb-2"
+        name="mobile"
+        placeholder="Mobile"
+        value={form.mobile}
+        onChange={handleChange}
+      />
+
+      <input
+        className="form-control mb-2"
+        name="district"
+        placeholder="District"
+        value={form.district}
+        onChange={handleChange}
+      />
+
+      <input
+        className="form-control mb-2"
+        name="address"
+        placeholder="Address"
+        value={form.address}
+        onChange={handleChange}
+      />
+
+      <p>
+        KYC Status:{" "}
+        <b className={profile?.kycVerified ? "text-success" : "text-danger"}>
+          {profile?.kycVerified ? "Verified" : "Pending"}
+        </b>
+      </p>
+
+      <button className="btn btn-primary me-2" onClick={handleSubmit}>
+        Update Profile
+      </button>
+
+      <button className="btn btn-danger" onClick={handleDelete}>
+        Delete Account
+      </button>
     </div>
   );
 };

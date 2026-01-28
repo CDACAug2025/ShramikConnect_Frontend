@@ -14,13 +14,9 @@ import ClientDashboardPage from '../modules/dashboard/client/pages/ClientDashboa
 import PostJob from '../modules/dashboard/client/pages/PostJob';
 import MyJobs from '../modules/dashboard/client/pages/MyJobs';
 import WorkerApplications from '../modules/dashboard/client/pages/WorkerApplications';
-import JobProgress from '../modules/dashboard/client/pages/JobProgress';
-import Contract from '../modules/dashboard/client/pages/Contract';
-import EscrowPayment from '../modules/dashboard/client/pages/EscrowPayment';
-import JobHistory from '../modules/dashboard/client/pages/JobHistory';
-import Chat from '../modules/dashboard/client/pages/Chat';
-import Notifications from '../modules/dashboard/client/pages/Notifications';
-import Dispute from '../modules/dashboard/client/pages/Dispute';
+//import JobProgress from '../modules/dashboard/client/pages/JobProgress';
+//import Contract from '../modules/dashboard/client/pages/Contract';
+
 
 const AppRoutes = () => {
   return (
@@ -47,13 +43,8 @@ const AppRoutes = () => {
           <Route path="/client/post-job" element={<PostJob />} />
           <Route path="/client/my-jobs" element={<MyJobs />} />
           <Route path="/client/applications" element={<WorkerApplications />} />
-          <Route path="/client/job-progress" element={<JobProgress />} />
-          <Route path="/client/contract" element={<Contract />} />
-          <Route path="/client/escrow" element={<EscrowPayment />} />
-          <Route path="/client/history" element={<JobHistory />} />
-          <Route path="/client/chat" element={<Chat />} />
-          <Route path="/client/notifications" element={<Notifications />} />
-          <Route path="/client/dispute" element={<Dispute />} />
+          
+          
         </Route>
       </Routes>
     </BrowserRouter>
