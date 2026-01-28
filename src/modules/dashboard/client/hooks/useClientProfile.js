@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import {
   getClientProfile,
-  updateClientProfile
+  updateClientProfile,
+  deleteClientAccount
 } from "../services/clientProfileService";
 
 export const useClientProfile = () => {
@@ -20,16 +21,16 @@ export const useClientProfile = () => {
 
   const saveProfile = async (data) => {
     await updateClientProfile(data);
-    loadProfile();
+    await loadProfile();
+  };
+
+  const deleteAccount = async () => {
+    await deleteClientAccount();
   };
 
   useEffect(() => {
     loadProfile();
   }, []);
 
-  return {
-    profile,
-    loading,
-    saveProfile
-  };
+  return { profile, loading, saveProfile, deleteAccount };
 };

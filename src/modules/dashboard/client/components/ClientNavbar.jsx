@@ -48,48 +48,14 @@ const ClientNavbar = () => {
             >
               Applications
             </Nav.Link>
-            <Nav.Link 
-              as={Link} 
-              to="/client/job-progress"
-              active={location.pathname === '/client/job-progress'}
-            >
-              Progress
-            </Nav.Link>
-            <Nav.Link 
-              as={Link} 
-              to="/client/contract"
-              active={location.pathname === '/client/contract'}
-            >
-              Contract
-            </Nav.Link>
-            <Nav.Link 
-              as={Link} 
-              to="/client/chat"
-              active={location.pathname === '/client/chat'}
-            >
-              Chat
-            </Nav.Link>
-            <Nav.Link 
-              as={Link} 
-              to="/client/history"
-              active={location.pathname === '/client/history'}
-            >
-              History
-            </Nav.Link>
-            <Nav.Link 
-              as={Link} 
-              to="/client/notifications"
-              active={location.pathname === '/client/notifications'}
-            >
-              Notifications
-            </Nav.Link>
+            
+             
           </Nav>
 
           <Nav>
             <NavDropdown title="Account" id="account-dropdown">
               <NavDropdown.Item as={Link} to="/client/profile">Profile</NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/client/escrow">Escrow</NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/client/dispute">Dispute</NavDropdown.Item>
+             
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
             </NavDropdown>
