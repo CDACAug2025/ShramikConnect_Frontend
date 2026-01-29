@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '../shared/layouts/MainLayout';
 
 // Auth
@@ -31,59 +31,70 @@ import WorkerApplications from '../modules/dashboard/client/pages/WorkerApplicat
 // Admin
 import UsersPage from '../modules/admin/pages/UsersPage';
 import MonitoringPage from '../modules/admin/pages/MonitoringPage';
-// import InventoryPage from '../modules/admin/pages/InventoryPage';
-// import PaymentsPage from '../modules/admin/pages/PaymentsPage';
-// import SubscriptionsPage from '../modules/admin/pages/SubscriptionsPage';
-// import SettingsPage from '../modules/admin/pages/SettingsPage';
+import InventoryPage from '../modules/admin/pages/InventoryPage';
+import PaymentsPage from '../modules/admin/pages/PaymentsPage';
+import SubscriptionsPage from '../modules/admin/pages/SubscriptionsPage';
+import SettingsPage from '../modules/admin/pages/SettingsPage';
 
 const AppRoutes = () => {
   return (
-    <BrowserRouter>
-      <Routes>
+    // ✅ CORRECT: Only <Routes> here. NO <BrowserRouter>.
+    <Routes>
 
+      {/* -------------------------------------------------------------------
+          GROUP 1: Public & User Pages (Uses MainLayout with Public Navbar) 
+         ------------------------------------------------------------------- */}
+      <Route element={<MainLayout />}>
         
+        {/* Public */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
 
-        {/* 🌍 Routes WITH layout */}
-        <Route element={<MainLayout />}>
+        {/* Auth */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        
+        {/* User Flows */}
+        <Route path="/kyc-pending" element={<KycPendingPage />} />
 
-          {/* Public */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
+        {/* Supervisor */}
+        <Route path="/supervisor/dashboard" element={<SupervisorDashboardPage />} />
+        <Route path="/supervisor/kyc-list" element={<KycListPage />} />
+        <Route path="/supervisor/disputes" element={<DisputesPage />} />
 
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/kyc-pending" element={<KycPendingPage />} />
+        {/* Organization */}
+        <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
+        <Route path="/organization/home" element={<OrganizationHome />} />
+        <Route path="/organization/profile" element={<OrganizationProfile />} />
+        <Route path="/organization/post-job" element={<OrganizationPostJob />} />
 
-          {/* Supervisor */}
-          <Route path="/supervisor/dashboard" element={<SupervisorDashboardPage />} />
-          <Route path="/supervisor/kyc-list" element={<KycListPage />} />
-          <Route path="/supervisor/disputes" element={<DisputesPage />} />
+        {/* Client */}
+        <Route path="/client/dashboard" element={<ClientDashboardPage />} />
+        <Route path="/client/profile" element={<ClientProfile />} />
+        <Route path="/client/post-job" element={<PostJob />} />
+        <Route path="/client/my-jobs" element={<MyJobs />} />
+        <Route path="/client/applications" element={<WorkerApplications />} />
+      </Route>
 
-          {/* Organization */}
-          <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
-          <Route path="/organization/home" element={<OrganizationHome />} />
-          <Route path="/organization/profile" element={<OrganizationProfile />} />
-          <Route path="/organization/post-job" element={<OrganizationPostJob />} />
 
-          {/* Client */}
-          <Route path="/client/dashboard" element={<ClientDashboardPage />} />
-          <Route path="/client/profile" element={<ClientProfile />} />
-          <Route path="/client/post-job" element={<PostJob />} />
-          <Route path="/client/my-jobs" element={<MyJobs />} />
-          <Route path="/client/applications" element={<WorkerApplications />} />
+      {/* -------------------------------------------------------------------
+          GROUP 2: Admin Pages (Standalone - They have their own Layout)
+          We DO NOT wrap these in MainLayout to avoid double navbars.
+         ------------------------------------------------------------------- */}
+      <Route path="/admin/users" element={<UsersPage />} />
+      <Route path="/admin/monitoring" element={<MonitoringPage />} />
+      <Route path="/admin/inventory" element={<InventoryPage />} />
+      <Route path="/admin/payments" element={<PaymentsPage />} />
+      <Route path="/admin/subscriptions" element={<SubscriptionsPage />} />
+      <Route path="/admin/settings" element={<SettingsPage />} />
 
-          {/* Admin */}
-          <Route path="/admin/users" element={<UsersPage />} />
-          <Route path="/admin/monitoring" element={<MonitoringPage />} />
-          {/* <Route path="/admin/inventory" element={<InventoryPage />} />
-          <Route path="/admin/payments" element={<PaymentsPage />} />
-          <Route path="/admin/subscriptions" element={<SubscriptionsPage />} />
-          <Route path="/admin/settings" element={<SettingsPage />} /> */}
+      {/* Default Redirect for Admin Root */}
+      <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+      {/* Route for /admin/dashboard mapped to Monitoring or a dedicated page */}
+      <Route path="/admin/dashboard" element={<MonitoringPage />} />
 
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    </Routes>
   );
 };
 

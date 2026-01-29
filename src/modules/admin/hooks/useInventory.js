@@ -1,54 +1,102 @@
-// import { useState, useEffect } from 'react';
-// import { fetchProducts, fetchOrders, addProduct, deleteProduct, updateProduct } from '../services/inventoryApi';
+import { useState, useEffect } from 'react';
 
-// const useInventory = () => {
-//   const [products, setProducts] = useState([]);
-//   const [orders, setOrders] = useState([]); // New State for Orders
-//   const [loading, setLoading] = useState(true);
+// ✅ STEP 1: Changed Port to 8080 (Default for Spring Boot)
+const API_URL = "http://localhost:8080/products"; 
+// Note: Verify if your backend controller path is "/products" or "/api/products"
 
-//   useEffect(() => {
-//     loadData();
-//   }, []);
+const useInventory = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-//   const loadData = async () => {
-//     setLoading(true);
-//     try {
-//       const [prodData, orderData] = await Promise.all([
-//         fetchProducts(),
-//         fetchOrders()
-//       ]);
-//       setProducts(prodData);
-//       setOrders(orderData);
-//     } catch (err) {
-//       console.error(err);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+  // --- 1. FETCH PRODUCTS ---
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(API_URL);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+      }
+      const data = await response.json();
+      setProducts(data);
+    } catch (err) {
+      console.error("Fetch failed:", err);
+      // alert("Could not connect to backend! Is Spring Boot running on port 8080?");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-//   const handleAddProduct = async (newProduct) => {
-//     // Simulate Image Upload (use placeholder if no image)
-//     const productWithImage = { 
-//       ...newProduct, 
-//       image: "https://via.placeholder.com/40" 
-//     };
-    
-//     const res = await addProduct(productWithImage);
-//     setProducts([...products, { ...productWithImage, id: res.id }]);
-//   };
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-//   const handleDeleteProduct = async (id) => {
-//     if (!window.confirm("Remove this item?")) return;
-//     await deleteProduct(id);
-//     setProducts(products.filter(p => p.id !== id));
-//   };
+  // --- 2. ADD PRODUCT (Strict - No Mocking) ---
+  const handleAddProduct = async (newProduct) => {
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProduct)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Server Error: ${response.status}`);
+      }
 
-//   const handleUpdateStock = async (id, newStock) => {
-//     await updateProduct(id, { stock: newStock });
-//     setProducts(products.map(p => p.id === id ? { ...p, stock: newStock } : p));
-//   };
+      const savedProduct = await response.json();
+      
+      // Only update UI if DB save was successful
+      setProducts(prev => [...prev, savedProduct]);
+      alert("✅ Product Saved to Database!");
+    } catch (err) {
+      console.error("Add failed:", err);
+      alert("❌ Failed to save! Check console for CORS or Server errors.");
+    }
+  };
 
-//   return { products, orders, loading, handleAddProduct, handleDeleteProduct, handleUpdateStock };
-// };
+  // --- 3. DELETE PRODUCT (Strict) ---
+  const handleDeleteProduct = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this item?")) return;
 
-// export default useInventory;
+    try {
+      const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+      
+      if (!response.ok) {
+        throw new Error(`Delete failed: ${response.status}`);
+      }
+      
+      setProducts(prev => prev.filter(p => p.id !== id));
+      alert("Item deleted from Database.");
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("❌ Delete failed! Check backend connection.");
+    }
+  };
+
+  // --- 4. UPDATE PRODUCT (Strict) ---
+  const handleUpdateProduct = async (id, updatedData) => {
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Update failed: ${response.status}`);
+      }
+
+      const savedProduct = await response.json();
+      
+      setProducts(prev => prev.map(p => p.id === id ? savedProduct : p));
+      alert("✅ Product Updated in Database!");
+    } catch (err) {
+      console.error("Update failed:", err);
+      alert("❌ Update failed! Check backend connection.");
+    }
+  };
+
+  return { products, loading, handleDeleteProduct, handleAddProduct, handleUpdateProduct };
+};
+
+export default useInventory;

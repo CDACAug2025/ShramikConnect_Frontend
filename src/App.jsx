@@ -1,15 +1,15 @@
-import AppRoutes from './routes/AppRoutes.jsx';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React from 'react';
+import AppRoutes from './routes/AppRoutes';
 
 const App = () => {
   return (
     <>
+      {/* We removed <AppNavbar /> from here because 
+         MainLayout.jsx and AdminLayout.jsx already handle the navbars.
+      */}
       <AppRoutes />
-      <ToastContainer position="top-right" autoClose={3000} />
     </>
   );
 };
-
 
 export default App;

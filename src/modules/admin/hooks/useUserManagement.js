@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import AdminService from '../../../services/adminService';
+
+// ✅ TRY THIS PATH (Goes up 3 levels to 'src/services')
+import AdminService from '../../../services/adminService'; 
+
+// IF the above fails, try with Capital 'A':
+// import AdminService from '../../../services/AdminService';
 
 const useUserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -10,8 +15,9 @@ const useUserManagement = () => {
     try {
       setLoading(true);
       const res = await AdminService.getAllUsers();
-      setUsers(res.data);
-    } catch {
+      setUsers(res.data || []);
+    } catch (err) {
+      console.error(err);
       setError('Failed to load users');
     } finally {
       setLoading(false);
@@ -22,32 +28,25 @@ const useUserManagement = () => {
     fetchUsers();
   }, []);
 
-  const updateUserStatus = async (userId, status) => {
-    await AdminService.updateUserStatus(userId, status);
-    setUsers(prev =>
-      prev.map(u =>
-        u.userId === userId ? { ...u, status } : u
-      )
-    );
-  };
+  const handleToggleStatus = async (userId, currentStatus) => {
+    const newStatus = currentStatus === 'ACTIVE' ? 'BLOCKED' : 'ACTIVE';
+    if (!window.confirm(`Are you sure you want to change status to ${newStatus}?`)) return;
 
-  const updateUserRole = async (userId, roleId) => {
-    await AdminService.updateUserRole(userId, roleId);
-    setUsers(prev =>
-      prev.map(u =>
-        u.userId === userId
-          ? { ...u, role: { ...u.role, roleId } }
-          : u
-      )
-    );
+    try {
+      await AdminService.updateUserStatus(userId, newStatus);
+      setUsers(prev => prev.map(u => u.userId === userId ? { ...u, status: newStatus } : u));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update status.");
+    }
   };
 
   return {
     users,
     loading,
     error,
-    updateUserStatus,
-    updateUserRole,
+    handleToggleStatus,
+    refetch: fetchUsers
   };
 };
 

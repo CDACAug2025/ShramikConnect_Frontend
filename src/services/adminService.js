@@ -3,23 +3,26 @@ import axiosInstance from './axiosInstance';
 const AdminService = {
 
   // --- USER MANAGEMENT ---
-  getAllUsers: (params = {}) =>
+  getAllUsers: (params = {}) => 
     axiosInstance.get('/admin/users', { params }),
 
-  searchUsers: (query) =>
-    axiosInstance.get('/admin/users', {
-      params: { search: query }
+  updateUserStatus: (userId, status) =>
+    axiosInstance.patch(`/admin/users/${userId}/status`, null, {
+        params: { status }
     }),
 
-  updateUserStatus: (userId, status) =>
-    axiosInstance.patch(`/admin/users/${userId}/status?status=${status}`),
-
   updateUserRole: (userId, roleId) =>
-    axiosInstance.patch(`/admin/users/${userId}/role?roleId=${roleId}`),
+    axiosInstance.patch(`/admin/users/${userId}/role`, null, {
+        params: { roleId }
+    }),
 
   // --- DASHBOARD ---
   getDashboardStats: () =>
     axiosInstance.get('/admin/dashboard/stats'),
+
+  // ✅ UPDATED URL to match your Controller
+  getSystemLogs: () => 
+    axiosInstance.get('/admin/dashboard/logs'), 
 };
 
 export default AdminService;

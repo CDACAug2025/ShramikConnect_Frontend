@@ -1,103 +1,126 @@
-// import React, { useState } from 'react';
-// import useSubscriptions from '../hooks/useSubscriptions';
-// import PlanCard from '../components/PlanCard';
-// import SubscriptionTable from '../components/SubscriptionTable';
+import React, { useState } from 'react';
+import AdminLayout from '../layouts/AdminLayout';
+import useSubscriptions from '../hooks/useSubscriptions';
 
-// const SubscriptionsPage = () => {
-//   const { plans, subscriptions, loading, handleUpdatePlan, handleCreatePlan } = useSubscriptions();
-  
-//   // New Plan State
-//   const [newPlan, setNewPlan] = useState({ name: '', price: '', interval: 'Monthly', features: '' });
+const SubscriptionsPage = () => {
+  const { plans, loading, updatePlanDetails, createPlan } = useSubscriptions();
+  const [showModal, setShowModal] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [formData, setFormData] = useState({ planId: '', name: '', price: '', duration: 'Monthly' });
 
-//   const onSubmit = (e) => {
-//     e.preventDefault();
-//     if (!newPlan.name || !newPlan.price) return;
+  const handleOpenCreate = () => {
+    setFormData({ planId: '', name: '', price: '', duration: 'Monthly' });
+    setIsEdit(false);
+    setShowModal(true);
+  };
 
-//     // Convert comma-separated string to array
-//     const featureArray = newPlan.features.split(',').map(f => f.trim()).filter(f => f !== "");
-    
-//     handleCreatePlan({ 
-//       ...newPlan, 
-//       price: Number(newPlan.price), 
-//       features: featureArray 
-//     });
-    
-//     setNewPlan({ name: '', price: '', interval: 'Monthly', features: '' }); // Reset
-//   };
+  const handleOpenEdit = (plan) => {
+    setFormData({
+      planId: plan.planId, 
+      name: plan.name,
+      price: plan.price,
+      duration: plan.duration || 'Monthly'
+    });
+    setIsEdit(true);
+    setShowModal(true);
+  };
 
-//   if (loading) return <div className="text-center py-5"><div className="spinner-border text-primary"></div></div>;
+  const handleSubmit = () => {
+    if (isEdit) {
+      updatePlanDetails(formData.planId, formData);
+    } else {
+      createPlan(formData);
+    }
+    setShowModal(false);
+  };
 
-//   return (
-//     <div className="container-fluid bg-light min-vh-100 py-5">
-//       <div className="container">
-        
-//         <div className="mb-4">
-//           <h2 className="fw-bold text-dark mb-1">Subscription Management</h2>
-//           <p className="text-muted">Create plans, define features, and manage validity.</p>
-//         </div>
+  if (loading) return <AdminLayout><div className="p-5 text-center">Loading...</div></AdminLayout>;
 
-//         {/* --- CREATE PLAN FORM --- */}
-//         <div className="card shadow-sm border-0 mb-5">
-//           <div className="card-header bg-white fw-bold text-primary pt-3">+ Create New Subscription Plan</div>
-//           <div className="card-body">
-//             <form onSubmit={onSubmit}>
-//               <div className="row g-3">
-//                 <div className="col-md-3">
-//                   <label className="form-label small fw-bold">Plan Name</label>
-//                   <input 
-//                     type="text" className="form-control" placeholder="e.g. Gold Tier"
-//                     value={newPlan.name} onChange={e => setNewPlan({...newPlan, name: e.target.value})} required 
-//                   />
-//                 </div>
-//                 <div className="col-md-2">
-//                   <label className="form-label small fw-bold">Price (₹)</label>
-//                   <input 
-//                     type="number" className="form-control" placeholder="199"
-//                     value={newPlan.price} onChange={e => setNewPlan({...newPlan, price: e.target.value})} required 
-//                   />
-//                 </div>
-//                 <div className="col-md-2">
-//                   <label className="form-label small fw-bold">Validity</label>
-//                   <select 
-//                     className="form-select"
-//                     value={newPlan.interval} onChange={e => setNewPlan({...newPlan, interval: e.target.value})}
-//                   >
-//                     <option value="Monthly">Monthly</option>
-//                     <option value="Quarterly">Quarterly</option>
-//                     <option value="Yearly">Yearly</option>
-//                   </select>
-//                 </div>
-//                 <div className="col-md-5">
-//                   <label className="form-label small fw-bold">Features (comma separated)</label>
-//                   <input 
-//                     type="text" className="form-control" placeholder="Priority Support, No Ads, Badge..."
-//                     value={newPlan.features} onChange={e => setNewPlan({...newPlan, features: e.target.value})} 
-//                   />
-//                 </div>
-//                 <div className="col-12 text-end">
-//                   <button type="submit" className="btn btn-primary fw-bold px-4">Create Plan</button>
-//                 </div>
-//               </div>
-//             </form>
-//           </div>
-//         </div>
+  return (
+    <AdminLayout>
+      <div className="container-fluid">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2 className="fw-bold text-dark">Subscription & Plans</h2>
+          <button className="btn btn-primary px-4 fw-bold" onClick={handleOpenCreate}>
+            Create New Plan
+          </button>
+        </div>
 
-//         {/* --- EXISTING PLANS --- */}
-//         <div className="row g-4 mb-5">
-//           {plans.map((plan) => (
-//             <div className="col-md-4" key={plan.id}>
-//               <PlanCard plan={plan} onUpdate={handleUpdatePlan} />
-//             </div>
-//           ))}
-//         </div>
+        <div className="row g-4">
+          {plans.map((plan) => (
+            // ✅ FIX: Unique key must be on the outermost div using the database ID
+            <div className="col-md-4" key={plan.planId}> 
+              <div className="card shadow-sm h-100 border-0">
+                <div className="card-body p-4">
+                  <span className="badge bg-primary bg-opacity-10 text-primary mb-2">
+                    {plan.duration}
+                  </span>
+                  <h4 className="fw-bold">{plan.name}</h4>
+                  <h2 className="fw-bold text-dark">₹{plan.price}</h2>
+                  <button 
+                    className="btn btn-dark w-100 mt-3 fw-bold" 
+                    onClick={() => handleOpenEdit(plan)}
+                  >
+                    Edit Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
 
-//         {/* --- SUBSCRIBERS TABLE --- */}
-//         <h5 className="fw-bold text-secondary mb-3">Active Subscribers</h5>
-//         <SubscriptionTable subscriptions={subscriptions} />
+        {/* --- DYNAMIC MODAL --- */}
+        {showModal && (
+          <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content border-0 shadow-lg p-3">
+                <div className="modal-header border-0">
+                  <h5 className="fw-bold">{isEdit ? 'Update Plan' : 'Create New Plan'}</h5>
+                  <button className="btn-close" onClick={() => setShowModal(false)}></button>
+                </div>
+                <div className="modal-body">
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted">Plan Name</label>
+                    <input 
+                      type="text" className="form-control" 
+                      value={formData.name} 
+                      onChange={e => setFormData({...formData, name: e.target.value})} 
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted">Price (₹)</label>
+                    <input 
+                      type="number" className="form-control" 
+                      value={formData.price} 
+                      onChange={e => setFormData({...formData, price: e.target.value})} 
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted">Billing Period</label>
+                    <select 
+                      className="form-select" 
+                      value={formData.duration}
+                      onChange={e => setFormData({...formData, duration: e.target.value})}
+                    >
+                      <option value="Monthly">Monthly</option>
+                      <option value="Yearly">Yearly</option>
+                      <option value="Lifetime">Lifetime</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="modal-footer border-0">
+                  <button className="btn btn-light px-4 fw-bold" onClick={() => setShowModal(false)}>Cancel</button>
+                  <button className="btn btn-primary px-4 fw-bold" onClick={handleSubmit}>
+                    {isEdit ? 'Save Changes' : 'Create Plan'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </AdminLayout>
+  );
+};
 
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default SubscriptionsPage;
+export default SubscriptionsPage;

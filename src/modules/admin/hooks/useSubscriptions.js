@@ -1,41 +1,66 @@
-// import { useState, useEffect } from 'react';
-// import { fetchPlans, fetchSubscriptions, updatePlan, createPlan } from '../services/subscriptionApi';
+import { useState, useEffect } from 'react';
 
-// const useSubscriptions = () => {
-//   const [plans, setPlans] = useState([]);
-//   const [subscriptions, setSubscriptions] = useState([]);
-//   const [loading, setLoading] = useState(true);
+const useSubscriptions = () => {
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-//   useEffect(() => {
-//     loadData();
-//   }, []);
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/admin/plans');
+      const data = await response.json();
+      
+      const formatted = data.map(p => ({
+        ...p,
+        // ✅ Ensure planId is mapped regardless of backend casing
+        planId: p.planId || p.plan_id, 
+        features: typeof p.features === 'string' ? p.features.split(',') : (p.features || [])
+      }));
+      setPlans(formatted);
+    } catch (err) {
+      console.error("Fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-//   const loadData = async () => {
-//     setLoading(true);
-//     try {
-//       const [plansData, subsData] = await Promise.all([fetchPlans(), fetchSubscriptions()]);
-//       setPlans(plansData);
-//       setSubscriptions(subsData);
-//     } catch (err) {
-//       console.error(err);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+  useEffect(() => { fetchData(); }, []);
 
-//   // --- UPDATED: Generic Update Function ---
-//   const handleUpdatePlan = async (id, updates) => {
-//     // Optimistic Update
-//     setPlans(plans.map(p => p.id === id ? { ...p, ...updates } : p));
-//     await updatePlan(id, updates);
-//   };
+  const updatePlanDetails = async (planId, updatedData) => {
+    if (!planId) return console.error("Update failed: planId is undefined");
 
-//   const handleCreatePlan = async (planData) => {
-//     const res = await createPlan(planData);
-//     setPlans([...plans, { ...planData, id: res.id, isActive: true }]);
-//   };
+    try {
+      const response = await fetch(`http://localhost:8080/api/admin/plans/${planId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData),
+      });
 
-//   return { plans, subscriptions, loading, handleUpdatePlan, handleCreatePlan };
-// };
+      if (response.ok) {
+        alert("Plan updated successfully!");
+        fetchData();
+      }
+    } catch (err) {
+      console.error("Update failed:", err);
+    }
+  };
 
-// export default useSubscriptions;
+  const createPlan = async (newPlan) => {
+    try {
+      const response = await fetch('http://localhost:8080/api/admin/plans', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newPlan),
+      });
+      if (response.ok) {
+        alert("Plan created successfully!");
+        fetchData();
+      }
+    } catch (err) {
+      console.error("Creation failed:", err);
+    }
+  };
+
+  return { plans, loading, updatePlanDetails, createPlan };
+};
+
+export default useSubscriptions;
