@@ -1,43 +1,54 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AdminService from '../../../services/adminService';
 
 const useUserManagement = () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const res = await AdminService.getAllUsers();
+      setUsers(res.data);
+    } catch {
+      setError('Failed to load users');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const fetchUsers = async () => {
-        try {
-            setLoading(true);
-            const response = await AdminService.getAllUsers();
-            setUsers(response.data);
-            setLoading(false);
-        } catch (err) {
-            setError("Failed to fetch users.");
-            setLoading(false);
-        }
-    };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-    // Block or Activate a User
-    const updateUserStatus = async (id, status) => {
-        try {
-            await AdminService.updateUserStatus(id, status);
-            // Optimistic Update (Update UI instantly without refreshing)
-            setUsers(users.map(user => 
-                user.id === id ? { ...user, status: status } : user
-            ));
-            return { success: true };
-        } catch (err) {
-            alert("Failed to update status");
-            return { success: false };
-        }
-    };
+  const updateUserStatus = async (userId, status) => {
+    await AdminService.updateUserStatus(userId, status);
+    setUsers(prev =>
+      prev.map(u =>
+        u.userId === userId ? { ...u, status } : u
+      )
+    );
+  };
 
-    return { users, loading, error, fetchUsers, updateUserStatus };
+  const updateUserRole = async (userId, roleId) => {
+    await AdminService.updateUserRole(userId, roleId);
+    setUsers(prev =>
+      prev.map(u =>
+        u.userId === userId
+          ? { ...u, role: { ...u.role, roleId } }
+          : u
+      )
+    );
+  };
+
+  return {
+    users,
+    loading,
+    error,
+    updateUserStatus,
+    updateUserRole,
+  };
 };
 
 export default useUserManagement;

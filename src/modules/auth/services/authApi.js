@@ -7,7 +7,7 @@ export const loginApi = async (payload) => {
       username: payload.email,
       password: payload.password
     };
-    const { data } = await axiosInstance.post('/api/auth/login', loginData);
+    const { data } = await axiosInstance.post('/auth/login', loginData);
     console.log('Login response:', data);
     return data;
   } catch (error) {
@@ -17,6 +17,6 @@ export const loginApi = async (payload) => {
 };
 
 export const registerApi = async (payload) => {
-  const { data } = await axiosInstance.post('/api/auth/register', payload);
+  const { data } = await axiosInstance.post('/auth/register', payload);
   return data;
 };

@@ -16,7 +16,7 @@ const OrganizationProfile = () => {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get('/api/organization/profile');
+      const response = await axiosInstance.get('/organization/profile');
       setProfile(response.data);
     } catch (err) {
       setError('Failed to load profile');
@@ -30,7 +30,7 @@ const OrganizationProfile = () => {
     try {
       setLoading(true);
       setError(null);
-      await axiosInstance.put('/api/organization/profile', profile);
+      await axiosInstance.put('/organization/profile', profile);
       setSuccess('Profile updated successfully');
       setIsEditing(false);
       setTimeout(() => setSuccess(null), 3000);

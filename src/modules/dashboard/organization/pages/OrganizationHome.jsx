@@ -20,7 +20,7 @@ const OrganizationHome = () => {
   const fetchJobs = async () => {
     try {
       setLoading(true);
-      const endpoint = showMyJobs ? '/api/jobs/my-jobs' : '/api/jobs/all';
+      const endpoint = showMyJobs ? '/jobs/my-jobs' : '/jobs/all';
       const response = await axiosInstance.get(endpoint);
       setJobs(response.data);
     } catch (err) {
@@ -49,7 +49,7 @@ const OrganizationHome = () => {
   const handleSaveEdit = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.put(`/api/jobs/${editingJob.jobId}`, {
+      await axiosInstance.put(`/jobs/${editingJob.jobId}`, {
         title: editingJob.title,
         description: editingJob.description,
         category: editingJob.category,

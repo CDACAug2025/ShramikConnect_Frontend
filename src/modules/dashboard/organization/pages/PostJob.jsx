@@ -31,7 +31,7 @@ const PostJob = () => {
         budget: parseFloat(jobData.budget)
       };
       
-      await axiosInstance.post('/api/jobs', payload);
+      await axiosInstance.post('/jobs', payload);
       alert('Job posted successfully!');
       navigate('/organization/home');
     } catch (err) {

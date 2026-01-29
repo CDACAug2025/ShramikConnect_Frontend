@@ -32,13 +32,13 @@ export const useAuth = () => {
       // 🚀 ROLE BASED REDIRECT
       switch (data.role) {
         case 'WORKER':
-          navigate('/dashboard/worker');
+          navigate('/worker/dashboard');
           break;
         case 'CLIENT':
-          navigate('/dashboard/client');
+          navigate('/client/dashboard');
           break;
         case 'ORGANIZATION':
-          navigate('/dashboard/organization');
+          navigate('/organization/dashboard');
           break;
         case 'SUPERVISOR':
           navigate('/supervisor/dashboard');
