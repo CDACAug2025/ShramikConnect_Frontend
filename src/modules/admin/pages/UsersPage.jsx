@@ -1,31 +1,14 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD
-import useUserManagement from '../hooks/useUserManagement'; // Import the Hook
-
-const UsersPage = () => {
-  // Use the Hook to get REAL data from Spring Boot
-  const { users, loading, error, updateUserStatus, updateUserRole } = useUserManagement();
-
-  // Local state for filtering (Search/Role)
-=======
 import useUserManagement from '../hooks/useUserManagement'; 
 
 const UsersPage = () => {
   const { users, loading, error, updateUserStatus } = useUserManagement();
 
   // Local State
->>>>>>> main
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('ALL');
   const [filterStatus, setFilterStatus] = useState('ALL');
 
-<<<<<<< HEAD
-  // Filter Logic (Runs on the Frontend for speed)
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = filterRole === 'ALL' || user.role === filterRole;
-=======
   // --- SAFE FILTER LOGIC ---
   const filteredUsers = (users || []).filter(user => {
     if (!user) return false;
@@ -50,7 +33,6 @@ const UsersPage = () => {
     const matchesSearch = name.includes(search) || email.includes(search);
     // Compare against the extracted role string
     const matchesRole = filterRole === 'ALL' || userRoleStr === filterRole;
->>>>>>> main
     const matchesStatus = filterStatus === 'ALL' || user.status === filterStatus;
     
     return matchesSearch && matchesRole && matchesStatus;
@@ -63,20 +45,12 @@ const UsersPage = () => {
     <div className="container-fluid py-4 bg-light min-vh-100">
       <div className="container">
         
-<<<<<<< HEAD
-        {/* Header */}
-=======
->>>>>>> main
         <div className="mb-4">
           <h2 className="fw-bold text-dark">User Management</h2>
           <p className="text-muted">Manage user access, roles, and account security.</p>
         </div>
 
-<<<<<<< HEAD
-        {/* Search & Filter Bar */}
-=======
         {/* --- FILTERS --- */}
->>>>>>> main
         <div className="card shadow-sm border-0 mb-4">
           <div className="card-body d-flex gap-3 flex-wrap">
             <input 
@@ -96,20 +70,13 @@ const UsersPage = () => {
             <select className="form-select" style={{ maxWidth: '150px' }} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
               <option value="ALL">All Statuses</option>
               <option value="ACTIVE">Active</option>
-<<<<<<< HEAD
-=======
               <option value="INACTIVE">Inactive</option>
->>>>>>> main
               <option value="BLOCKED">Blocked</option>
             </select>
           </div>
         </div>
 
-<<<<<<< HEAD
-        {/* Users Table */}
-=======
         {/* --- TABLE --- */}
->>>>>>> main
         <div className="card shadow-sm border-0">
           <div className="table-responsive">
             <table className="table table-hover align-middle mb-0">
@@ -118,80 +85,11 @@ const UsersPage = () => {
                   <th className="ps-4">USER</th>
                   <th>ROLE</th>
                   <th>STATUS</th>
-<<<<<<< HEAD
-                  <th className="text-end pe-4">ACTIONS</th>
-=======
                   <th className="text-end pe-4">CHANGE STATUS</th>
->>>>>>> main
                 </tr>
               </thead>
               <tbody>
                 {filteredUsers.length > 0 ? (
-<<<<<<< HEAD
-                  filteredUsers.map(user => (
-                    <tr key={user.id}>
-                      {/* Name & Email */}
-                      <td className="ps-4">
-                        <div className="d-flex align-items-center">
-                          <div className="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold me-3" style={{ width: '40px', height: '40px' }}>
-                            {user.name.charAt(0).toUpperCase()}
-                          </div>
-                          <div>
-                            <div className="fw-bold text-dark">{user.name}</div>
-                            <small className="text-muted">{user.email}</small>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Role Dropdown */}
-                      <td>
-                        <select 
-                          className="form-select form-select-sm border-0 bg-light" 
-                          style={{ width: '120px' }}
-                          value={user.role}
-                          onChange={(e) => updateUserRole(user.id, e.target.value)}
-                        >
-                          <option value="WORKER">Worker</option>
-                          <option value="CLIENT">Client</option>
-                          <option value="ADMIN">Admin</option>
-                        </select>
-                      </td>
-
-                      {/* Status Badge */}
-                      <td>
-                        <span className={`badge px-3 py-2 rounded-pill ${
-                          user.status === 'ACTIVE' ? 'bg-success bg-opacity-10 text-success' : 
-                          user.status === 'BLOCKED' ? 'bg-danger bg-opacity-10 text-danger' : 'bg-secondary'
-                        }`}>
-                          {user.status}
-                        </span>
-                      </td>
-
-                      {/* Action Buttons */}
-                      <td className="text-end pe-4">
-                        {user.status === 'BLOCKED' ? (
-                          <button 
-                            className="btn btn-sm btn-success fw-bold px-3"
-                            onClick={() => updateUserStatus(user.id, 'ACTIVE')}
-                          >
-                            Activate
-                          </button>
-                        ) : (
-                          <button 
-                            className="btn btn-sm btn-outline-danger fw-bold px-3"
-                            onClick={() => updateUserStatus(user.id, 'BLOCKED')}
-                          >
-                            Block
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="4" className="text-center py-5 text-muted">No users found.</td>
-                  </tr>
-=======
                   filteredUsers.map((user, index) => {
                     const userId = user.id || user.userId || user._id;
 
@@ -263,7 +161,6 @@ const UsersPage = () => {
                   })
                 ) : (
                   <tr><td colSpan="4" className="text-center py-5 text-muted">No users match your filters.</td></tr>
->>>>>>> main
                 )}
               </tbody>
             </table>
