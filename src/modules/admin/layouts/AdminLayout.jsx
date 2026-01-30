@@ -1,9 +1,18 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { clearAuth } from '@/shared/utils/authUtils';
+import { clearToken } from '@/shared/utils/tokenUtils';
+
 
 const AdminLayout = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isActive = (path) => location.pathname.startsWith(path) ? 'active fw-bold' : '';
+  const handleLogout = () => {
+      clearToken();
+      clearAuth();
+      navigate('/login');
+    };
 
   return (
     <div className="d-flex flex-column min-vh-100 bg-light" style={{ width: '100%', maxWidth: '100%', margin: 0, padding: 0 }}>
@@ -31,7 +40,7 @@ const AdminLayout = ({ children }) => {
                <div className="text-end d-none d-lg-block text-white me-3">
                   <div className="small fw-bold">Admin User</div>
                </div>
-               <Link to="/logout" className="btn btn-outline-danger btn-sm">Logout</Link>
+               <Link onClick={handleLogout} className="btn btn-outline-danger btn-sm">Logout</Link>
             </div>
           </div>
         </div>
