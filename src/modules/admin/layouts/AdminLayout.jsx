@@ -9,19 +9,19 @@ const AdminLayout = ({ children }) => {
   const navigate = useNavigate();
   const isActive = (path) => location.pathname.startsWith(path) ? 'active fw-bold' : '';
   const handleLogout = () => {
-      clearToken();
-      clearAuth();
-      navigate('/login');
-    };
+    clearToken();
+    clearAuth();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div className="d-flex flex-column min-vh-100 bg-light" style={{ width: '100%', maxWidth: '100%', margin: 0, padding: 0 }}>
-      
+
       {/* --- ADMIN NAVBAR --- */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm w-100">
-        <div className="container-fluid"> 
+        <div className="container-fluid">
           <Link className="navbar-brand fw-bold text-uppercase d-flex align-items-center" to="/admin/dashboard">
-            <i className="bi bi-grid-fill me-2 text-primary"></i> 
+            <i className="bi bi-grid-fill me-2 text-primary"></i>
             Shramik <span className="text-primary ms-1">Admin</span>
           </Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
@@ -37,10 +37,18 @@ const AdminLayout = ({ children }) => {
               <li className="nav-item"><Link className={`nav-link ${isActive('/admin/settings')}`} to="/admin/settings">Settings</Link></li>
             </ul>
             <div className="d-flex align-items-center">
-               <div className="text-end d-none d-lg-block text-white me-3">
-                  <div className="small fw-bold">Admin User</div>
-               </div>
-               <Link onClick={handleLogout} className="btn btn-outline-danger btn-sm">Logout</Link>
+              <div className="text-end d-none d-lg-block text-white me-3">
+                <div className="small fw-bold">Admin User</div>
+              </div>
+              
+              <button
+                onClick={handleLogout}
+                className="btn btn-outline-danger btn-sm"
+                type="button"
+              >
+                Logout
+              </button>
+              
             </div>
           </div>
         </div>
@@ -49,7 +57,7 @@ const AdminLayout = ({ children }) => {
       {/* --- PAGE CONTENT --- */}
       <main className="flex-grow-1 w-100">
         <div className="container-fluid px-4 py-4">
-           {children}
+          {children}
         </div>
       </main>
 
@@ -99,9 +107,9 @@ const AdminLayout = ({ children }) => {
               <p className="text-muted small"><i className="bi bi-geo-alt me-2"></i> C-DAC Mumbai, India</p>
             </div>
           </div>
-          
+
           <hr className="my-4 text-muted opacity-25" />
-          
+
           <div className="row">
             <div className="col-md-6 text-center text-md-start">
               <span className="text-muted small">© 2026 ShramikConnect Admin Panel. All rights reserved.</span>
