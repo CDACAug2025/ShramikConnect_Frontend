@@ -15,36 +15,37 @@ export const useAuth = () => {
 
       const data = await loginApi(credentials);
 
-      // ✅ Log the incoming role to debug redirects
-      console.log("Login Successful. Role detected:", data.role);
+      console.log("Login Successful:", data);
 
-      // 🔐 SAVE TOKEN
       saveToken(data.token);
 
-      // 👤 SAVE USER DATA (CRITICAL)
-      localStorage.setItem('token', data.token); // Ensure token is accessible for workerDashboardApi
+      localStorage.setItem('token', data.token);
       localStorage.setItem('userRole', data.role);
       localStorage.setItem('userName', data.fullName || '');
       localStorage.setItem('userId', data.userId);
 
-      // 🚦 ACCOUNT STATUS CHECK
+      // 🚦 EMAIL CHECK
       if (data.emailStatus !== 'VERIFIED') {
-        navigate('/kyc-pending');
-        return;
-      }else if (data.kycStatus !== 'APPROVED') {
-        navigate('/kyc-pending');
-        return;
-      }else if (data.accountStatus !== 'ACTIVE') {
-        navigate('/register');
+        navigate('/verify-email');
         return;
       }
 
+      // 🪪 KYC CHECK
+      if (data.kycStatus !== 'APPROVED') {
+        navigate('/kyc-pending');
+        return;
+      }
+
+      // 🔐 ACCOUNT STATUS
+      if (data.accountStatus !== 'ACTIVE') {
+        navigate('/login');
+        return;
+      }
 
       // 🚀 ROLE BASED REDIRECT
-      // Make sure these strings ('WORKER', 'ORGANIZATION') match your Database EXACTLY
       switch (data.role) {
         case 'WORKER':
-          navigate('/worker/dashboard'); // ✅ standalone route
+          navigate('/worker/dashboard');
           break;
         case 'CLIENT':
           navigate('/client/dashboard');
@@ -62,8 +63,7 @@ export const useAuth = () => {
           navigate('/');
       }
     } catch (err) {
-      console.error("Login failed:", err);
-      alert('Invalid credentials or Server Error');
+      alert(err.response?.data?.message || 'Invalid credentials');
     } finally {
       setLoading(false);
     }
@@ -72,7 +72,7 @@ export const useAuth = () => {
   const logout = () => {
     clearToken();
     clearAuth();
-    localStorage.clear(); // Ensure all worker data is wiped on logout
+    localStorage.clear();
     navigate('/login');
   };
 
