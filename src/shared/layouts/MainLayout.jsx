@@ -1,22 +1,14 @@
-import React from 'react'; 
 import AppNavbar from '../components/AppNavbar';
-import ClientNavbar from '../../modules/dashboard/client/components/ClientNavbar';
 import AppFooter from '../components/AppFooter';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 const MainLayout = () => {
-  const location = useLocation();
-  const isClientRoute = location.pathname.startsWith('/client');
-
   return (
     <div className="d-flex flex-column min-vh-100">
-      {isClientRoute ? <ClientNavbar /> : <AppNavbar />}
-
+      <AppNavbar />
       <main className="flex-fill">
-        {/* 2. Render {children} instead of <Outlet /> */}
-        {children}
+        <Outlet />
       </main>
-
       <AppFooter />
     </div>
   );

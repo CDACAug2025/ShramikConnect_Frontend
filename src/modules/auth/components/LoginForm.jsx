@@ -1,3 +1,4 @@
+// components/LoginForm.jsx
 import { Form, Button } from 'react-bootstrap';
 import { useAuth } from '../hooks/useAuth';
 
@@ -9,7 +10,7 @@ const LoginForm = () => {
     const data = new FormData(e.target);
 
     login({
-      email: data.get('username'),
+      username: data.get('username'), // ✅ email OR phone
       password: data.get('password'),
     });
   };
@@ -17,7 +18,11 @@ const LoginForm = () => {
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group className="mb-3">
-        <Form.Control name="username" placeholder="Email or Phone" required />
+        <Form.Control
+          name="username"
+          placeholder="Email or Phone"
+          required
+        />
       </Form.Group>
 
       <Form.Group className="mb-3">

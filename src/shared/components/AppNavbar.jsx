@@ -1,15 +1,16 @@
-import { Navbar, Nav, Container, Button } from 'react-bootstrap';
-
+// shared/components/AppNavbar.jsx
+import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { getToken, clearToken } from '@/shared/utils/tokenUtils';
-
+import { getAuth, clearAuth } from '@/shared/utils/authUtils';
+import { clearToken } from '@/shared/utils/tokenUtils';
 
 const AppNavbar = () => {
-const navigate = useNavigate();
-  const token = getToken(); // 🔐 check login status
+  const navigate = useNavigate();
+  const { token, role, name } = getAuth();
 
   const handleLogout = () => {
     clearToken();
+    clearAuth();
     navigate('/login');
   };
 
@@ -20,21 +21,63 @@ const navigate = useNavigate();
           ShramikConnect
         </Navbar.Brand>
 
-        <Navbar.Toggle aria-controls="main-navbar" />
-        <Navbar.Collapse id="main-navbar">
+        <Navbar.Toggle />
+        <Navbar.Collapse>
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/about">About</Nav.Link>
-            <Nav.Link as={Link} to="/contact">Contact</Nav.Link>
-            
+
+            {/* ---------- PUBLIC ---------- */}
+            {!token && (
+              <>
+                <Nav.Link as={Link} to="/">Home</Nav.Link>
+                <Nav.Link as={Link} to="/about">About</Nav.Link>
+                <Nav.Link as={Link} to="/contact">Contact</Nav.Link>
+              </>
+            )}
+
+            {/* ---------- ADMIN ---------- */}
+            {role === 'ADMIN' && (
+              <>
+                <Nav.Link as={Link} to="/admin/users">Users</Nav.Link>
+                <Nav.Link as={Link} to="/admin/monitoring">Monitoring</Nav.Link>
+                <Nav.Link as={Link} to="/admin/inventory">Inventory</Nav.Link>
+                <Nav.Link as={Link} to="/admin/payments">Payments</Nav.Link>
+                <Nav.Link as={Link} to="/admin/subscriptions">Subscriptions</Nav.Link>
+                <Nav.Link as={Link} to="/admin/settings">Settings</Nav.Link>
+              </>
+            )}
+
+            {/* ---------- SUPERVISOR ---------- */}
+            {role === 'SUPERVISOR' && (
+              <>
+                <Nav.Link as={Link} to="/supervisor/dashboard">Dashboard</Nav.Link>
+                <Nav.Link as={Link} to="/supervisor/kyc-list">KYC Requests</Nav.Link>
+                <Nav.Link as={Link} to="/supervisor/disputes">Disputes</Nav.Link>
+              </>
+            )}
+
+            {/* ---------- ORGANIZATION ---------- */}
+            {role === 'ORGANIZATION' && (
+              <>
+                <Nav.Link as={Link} to="/organization/dashboard">Dashboard</Nav.Link>
+                <Nav.Link as={Link} to="/organization/home">Home</Nav.Link>
+                <Nav.Link as={Link} to="/organization/profile">Profile</Nav.Link>
+                <Nav.Link as={Link} to="/organization/post-job">Post Job</Nav.Link>
+              </>
+            )}
+
+            {/* ---------- CLIENT ---------- */}
+            {role === 'CLIENT' && (
+              <>
+                <Nav.Link as={Link} to="/client/dashboard">Dashboard</Nav.Link>
+                <Nav.Link as={Link} to="/client/profile">Profile</Nav.Link>
+                <Nav.Link as={Link} to="/client/post-job">Post Job</Nav.Link>
+                <Nav.Link as={Link} to="/client/my-jobs">My Jobs</Nav.Link>
+                <Nav.Link as={Link} to="/client/applications">Applications</Nav.Link>
+              </>
+            )}
           </Nav>
 
-          <Nav>
-            <Nav.Link as={Link} to="/supervisor/dashboard">Supervisor Dashboard</Nav.Link>
-            <Nav.Link as={Link} to="/supervisor/kyc-list">KYC Requests</Nav.Link>
-            <Nav.Link as={Link} to="/supervisor/disputes">Disputes</Nav.Link>
-            <Nav.Link as={Link} to="/kyc-pending">KYC Pending</Nav.Link>
-          </Nav>
-
+          {/* ---------- RIGHT SIDE ---------- */}
           <Nav>
             {!token ? (
               <>
@@ -42,13 +85,18 @@ const navigate = useNavigate();
                 <Nav.Link as={Link} to="/register">Register</Nav.Link>
               </>
             ) : (
-              <Button
-                variant="outline-danger"
-                size="sm"
-                onClick={handleLogout}
-              >
-                Logout
-              </Button>
+              <NavDropdown title={name || 'Account'} align="end">
+                <NavDropdown.Item as={Link} to={`/${role?.toLowerCase()}/profile`}>
+                  Profile
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item
+                  onClick={handleLogout}
+                  className="text-danger"
+                >
+                  Logout
+                </NavDropdown.Item>
+              </NavDropdown>
             )}
           </Nav>
         </Navbar.Collapse>

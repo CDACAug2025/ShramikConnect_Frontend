@@ -10,6 +10,7 @@ export const decideKyc = (kycId, decision) =>
   );
 
 
-  export const submitKycApi = (userId, payload) => {
-  return axios.post(`/kyc/submit?userId=${userId}`, payload);
+  export const submitKycApi = async (payload) => {
+  const { data } = await axios.post('/kyc/submit', payload);
+  return data;
 };

@@ -1,43 +1,53 @@
-import { useState, useEffect } from 'react';
-import AdminService from '../../../services/adminService';
+import { useEffect, useState } from 'react';
+
+// ✅ TRY THIS PATH (Goes up 3 levels to 'src/services')
+import AdminService from '../../../services/adminService'; 
+
+// IF the above fails, try with Capital 'A':
+// import AdminService from '../../../services/AdminService';
 
 const useUserManagement = () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const res = await AdminService.getAllUsers();
+      setUsers(res.data || []);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load users');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const fetchUsers = async () => {
-        try {
-            setLoading(true);
-            const response = await AdminService.getAllUsers();
-            setUsers(response.data);
-            setLoading(false);
-        } catch (err) {
-            setError("Failed to fetch users.");
-            setLoading(false);
-        }
-    };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-    // Block or Activate a User
-    const updateUserStatus = async (id, status) => {
-        try {
-            await AdminService.updateUserStatus(id, status);
-            // Optimistic Update (Update UI instantly without refreshing)
-            setUsers(users.map(user => 
-                user.id === id ? { ...user, status: status } : user
-            ));
-            return { success: true };
-        } catch (err) {
-            alert("Failed to update status");
-            return { success: false };
-        }
-    };
+  const handleToggleStatus = async (userId, currentStatus) => {
+    const newStatus = currentStatus === 'ACTIVE' ? 'BLOCKED' : 'ACTIVE';
+    if (!window.confirm(`Are you sure you want to change status to ${newStatus}?`)) return;
 
-    return { users, loading, error, fetchUsers, updateUserStatus };
+    try {
+      await AdminService.updateUserStatus(userId, newStatus);
+      setUsers(prev => prev.map(u => u.userId === userId ? { ...u, status: newStatus } : u));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update status.");
+    }
+  };
+
+  return {
+    users,
+    loading,
+    error,
+    handleToggleStatus,
+    refetch: fetchUsers
+  };
 };
 
 export default useUserManagement;
