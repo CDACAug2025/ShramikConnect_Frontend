@@ -10,7 +10,7 @@ const LoginForm = () => {
     const data = new FormData(e.target);
 
     login({
-      email: data.get('username'),
+      username: data.get('username'), // ✅ email OR phone
       password: data.get('password'),
     });
   };
