@@ -1,3 +1,4 @@
+// src/modules/dashboard/worker/services/workerDashboardApi.js
 import axios from 'axios';
 
 const apiClient = axios.create({
@@ -13,22 +14,16 @@ apiClient.interceptors.request.use((config) => {
 });
 
 export const workerApi = {
-
     getProfile: () => apiClient.get('/worker/profile'),
     getDashboardStats: () => apiClient.get('/worker/dashboard-stats'),
-    
-    getJobFeed: (district, category) => apiClient.get('/jobs/feed', { params: { district, category } }),
-    
+    getJobFeed: (district) => apiClient.get('/jobs/feed', { params: { district } }),
     applyToJob: (jobId) => apiClient.post(`/applications/apply/${jobId}`),
-    
     getMyApplications: () => apiClient.get('/applications/my-status'), 
+    getActiveJobs: () => apiClient.get('/worker/active-jobs'),
     
-    // ✅ Fetches real data: Electrical (#1) and Plumbing (#2)
+    // ✅ ADD THIS MISSING METHOD TO FIX THE ERROR
+    getHistory: () => apiClient.get('/worker/history'),
+    
     getMyContracts: () => apiClient.get('/worker/contracts'),
-    
-    // ✅ Sums real escrow: ₹5,500 for your signed work
     getWalletStats: () => apiClient.get('/worker/wallet'),
-    
-    // ✅ FIXED: Removed extra "/worker" to match @RequestMapping("/api/worker")
-    raiseDispute: (data) => apiClient.post('/worker/disputes/raise', data),
 };
