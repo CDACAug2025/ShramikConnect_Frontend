@@ -14,7 +14,7 @@ export const useAuth = () => {
       setLoading(true);
 
       const data = await loginApi(credentials);
-      
+
       // ✅ Log the incoming role to debug redirects
       console.log("Login Successful. Role detected:", data.role);
 
@@ -28,10 +28,17 @@ export const useAuth = () => {
       localStorage.setItem('userId', data.userId);
 
       // 🚦 ACCOUNT STATUS CHECK
-      if (data.accountStatus !== 'ACTIVE') {
+      if (data.emailStatus !== 'VERIFIED') {
         navigate('/kyc-pending');
         return;
+      }else if (data.kycStatus !== 'APPROVED') {
+        navigate('/kyc-pending');
+        return;
+      }else if (data.accountStatus !== 'ACTIVE') {
+        navigate('/register');
+        return;
       }
+
 
       // 🚀 ROLE BASED REDIRECT
       // Make sure these strings ('WORKER', 'ORGANIZATION') match your Database EXACTLY
