@@ -27,6 +27,14 @@ import ClientProfile from '../modules/dashboard/client/pages/ClientProfile';
 import PostJob from '../modules/dashboard/client/pages/PostJob';
 import MyJobs from '../modules/dashboard/client/pages/MyJobs';
 import WorkerApplications from '../modules/dashboard/client/pages/WorkerApplications';
+// add the contact routes
+//import ClientContracts from '../modules/dashboard/client/pages/ClientContracts';
+import JobHistory from '../modules/dashboard/client/pages/JobHistory';
+//import ClientPaymentHistory from '../modules/dashboard/client/pages/ClientPaymentHistory';
+// Client – Contracts
+import ClientContracts from '../modules/dashboard/client/pages/ClientContracts';
+import CreateClientContract from '../modules/dashboard/client/pages/CreateClientContract';
+
 
 // Admin
 import UsersPage from '../modules/admin/pages/UsersPage';
@@ -72,7 +80,11 @@ const AppRoutes = () => {
           <Route path="/client/post-job" element={<PostJob />} />
           <Route path="/client/my-jobs" element={<MyJobs />} />
           <Route path="/client/applications" element={<WorkerApplications />} />
+          <Route path="/client/contracts" element={<ClientContracts />} />
+          <Route path="/client/contracts/create" element={<CreateClientContract />} />
+          <Route path="/client/job-history" element={<JobHistory />} />
 
+           
           {/* Admin */}
           <Route path="/admin/users" element={<UsersPage />} />
           <Route path="/admin/monitoring" element={<MonitoringPage />} />
