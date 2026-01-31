@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AdminLayout from '../layouts/AdminLayout';
+// import AdminLayout from '../layouts/AdminLayout';
 import useSettings from '../hooks/useSettings';
 
 const SettingsPage = () => {
@@ -13,10 +13,10 @@ const SettingsPage = () => {
     loading 
   } = useSettings();
 
-  if (loading) return <AdminLayout><div className="p-5 text-center">Loading Settings...</div></AdminLayout>;
+  if (loading) return <div className="p-5 text-center">Loading Settings...</div>;
 
   return (
-    <AdminLayout>
+    
       <div className="w-100">
         <h2 className="fw-bold text-dark mb-4">Configuration Center</h2>
 
@@ -178,7 +178,7 @@ const SettingsPage = () => {
 
         </div>
       </div>
-    </AdminLayout>
+    
   );
 };
 

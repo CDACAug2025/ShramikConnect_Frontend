@@ -32,6 +32,8 @@ import OrganizationDashboard from '../modules/dashboard/organization/pages/Organ
 import OrganizationProfile from '../modules/dashboard/organization/pages/OrganizationProfile';
 import OrganizationHome from '../modules/dashboard/organization/pages/OrganizationHome';
 import OrganizationPostJob from '../modules/dashboard/organization/pages/PostJob';
+import OrganizationApplications from '../modules/dashboard/organization/pages/OrganizationApplications';
+import ContractWelcome from '../modules/dashboard/organization/pages/ContractWelcome';
 
 // Client
 import ClientDashboardPage from '../modules/dashboard/client/pages/ClientDashboardPage';
@@ -106,10 +108,27 @@ const AppRoutes = () => {
         <Route path="/supervisor/disputes" element={<DisputesPage />} />
 
         {/* Organization */}
-        <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
-        <Route path="/organization/home" element={<OrganizationHome />} />
-        <Route path="/organization/profile" element={<OrganizationProfile />} />
-        <Route path="/organization/post-job" element={<OrganizationPostJob />} />
+          <Route
+            path="/organization/dashboard"
+            element={<OrganizationDashboard />}
+          />
+          <Route path="/organization/home" element={<OrganizationHome />} />
+          <Route
+            path="/organization/profile"
+            element={<OrganizationProfile />}
+          />
+          <Route
+            path="/organization/post-job"
+            element={<OrganizationPostJob />}
+          />
+          <Route
+            path="/organization/applications"
+            element={<OrganizationApplications />}
+          />
+          <Route
+            path="/organization/contract/:applicationId"
+            element={<ContractWelcome />}
+          />
 
         {/* Client */}
           <Route path="/client/dashboard" element={<ClientDashboardPage />} />
@@ -125,7 +144,9 @@ const AppRoutes = () => {
       {/* -------------------------------------------------------------------
           GROUP 2: Admin Pages (Standalone - They have their own Layout)
           We DO NOT wrap these in MainLayout to avoid double navbars.
-         ------------------------------------------------------------------- */}
+        
+      ------------------------------------------------------------------- */}
+      
       <Route path="/admin/users" element={<UsersPage />} />
       <Route path="/admin/monitoring" element={<MonitoringPage />} />
       <Route path="/admin/inventory" element={<InventoryPage />} />

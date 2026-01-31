@@ -1,30 +1,30 @@
 import React from 'react';
-import AdminLayout from '../layouts/AdminLayout'; // ✅ Import Layout
+// import AdminLayout from '../layouts/AdminLayout'; // ✅ Import Layout
 import useAdminDashboard from '../hooks/useAdminDashboard';
 
 const MonitoringPage = () => {
   const { stats, logs, loading, error } = useAdminDashboard();
 
   if (loading) return (
-    <AdminLayout>
+    
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
       </div>
-    </AdminLayout>
+    
   );
 
   if (error) return (
-    <AdminLayout>
+    
       <div className="alert alert-danger m-4" role="alert">
         {error}
       </div>
-    </AdminLayout>
+    
   );
 
   return (
-    <AdminLayout>
+    
       <div className="w-100">
         
         {/* --- Header Section --- */}
@@ -180,7 +180,7 @@ const MonitoringPage = () => {
 
         </div>
       </div>
-    </AdminLayout>
+    
   );
 };
 

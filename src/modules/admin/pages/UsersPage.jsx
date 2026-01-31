@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AdminLayout from '../layouts/AdminLayout';
+// import AdminLayout from '../layouts/AdminLayout';
 import useUserManagement from '../hooks/useUserManagement';
 
 const UsersPage = () => {
@@ -20,21 +20,21 @@ const UsersPage = () => {
   });
 
   if (loading) return (
-    <AdminLayout>
+    
       <div className="d-flex justify-content-center align-items-center w-100" style={{ minHeight: '60vh' }}>
         <div className="spinner-border text-primary"></div>
       </div>
-    </AdminLayout>
+    
   );
 
   if (error) return (
-     <AdminLayout>
+     
          <div className="alert alert-danger m-4">{error}</div>
-     </AdminLayout>
+     
   );
 
   return (
-    <AdminLayout>
+    
       <div className="w-100">
         <h3 className="fw-bold text-dark mb-4">User Management</h3>
 
@@ -106,7 +106,7 @@ const UsersPage = () => {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    
   );
 };
 
