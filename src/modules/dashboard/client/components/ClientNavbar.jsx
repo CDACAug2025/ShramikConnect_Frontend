@@ -48,7 +48,27 @@ const ClientNavbar = () => {
             >
               Applications
             </Nav.Link>
+
+               {/* ✅ CONTRACTS */}
+            <Nav.Link
+              as={Link}
+              to="/client/contracts"
+              active={location.pathname.startsWith('/client/contracts')}
+            >
+              Contracts
+            </Nav.Link>
             
+              {/* ✅ JOB HISTORY (ADDED) */}
+            <Nav.Link
+              as={Link}
+              to="/client/job-history"
+              active={location.pathname === '/client/job-history'}
+            >
+              Job History
+            </Nav.Link>
+
+          
+
              
           </Nav>
 

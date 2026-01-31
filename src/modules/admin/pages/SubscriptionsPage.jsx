@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AdminLayout from '../layouts/AdminLayout';
+// import AdminLayout from '../layouts/AdminLayout';
 import useSubscriptions from '../hooks/useSubscriptions';
 
 const SubscriptionsPage = () => {
@@ -34,10 +34,10 @@ const SubscriptionsPage = () => {
     setShowModal(false);
   };
 
-  if (loading) return <AdminLayout><div className="p-5 text-center">Loading...</div></AdminLayout>;
+  if (loading) return <div className="p-5 text-center">Loading...</div>;
 
   return (
-    <AdminLayout>
+    
       <div className="container-fluid">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2 className="fw-bold text-dark">Subscription & Plans</h2>
@@ -119,7 +119,7 @@ const SubscriptionsPage = () => {
           </div>
         )}
       </div>
-    </AdminLayout>
+    
   );
 };
 

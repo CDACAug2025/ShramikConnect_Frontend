@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import AdminLayout from '../layouts/AdminLayout'; 
+// import AdminLayout from '../layouts/AdminLayout'; 
 import usePayments from '../hooks/usePayments';
 
 const PaymentsPage = () => {
   const { transactions, escrowFunds, loading, downloadReport, releaseEscrow } = usePayments();
   const [activeTab, setActiveTab] = useState('all'); 
 
-  if (loading) return <AdminLayout><div className="p-5 text-center">Loading Financial Data...</div></AdminLayout>;
+  if (loading) return <div className="p-5 text-center">Loading Financial Data...</div>;
 
   return (
-    <AdminLayout>
+    
       <div className="w-100">
         
         {/* Header */}
@@ -117,7 +117,7 @@ const PaymentsPage = () => {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    
   );
 };
 

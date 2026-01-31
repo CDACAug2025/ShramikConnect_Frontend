@@ -37,6 +37,7 @@ const AppNavbar = () => {
             {/* ---------- ADMIN ---------- */}
             {role === 'ADMIN' && (
               <>
+                
                 <Nav.Link as={Link} to="/admin/users">Users</Nav.Link>
                 <Nav.Link as={Link} to="/admin/monitoring">Monitoring</Nav.Link>
                 <Nav.Link as={Link} to="/admin/inventory">Inventory</Nav.Link>
@@ -60,8 +61,9 @@ const AppNavbar = () => {
               <>
                 <Nav.Link as={Link} to="/organization/dashboard">Dashboard</Nav.Link>
                 <Nav.Link as={Link} to="/organization/home">Home</Nav.Link>
-                <Nav.Link as={Link} to="/organization/profile">Profile</Nav.Link>
                 <Nav.Link as={Link} to="/organization/post-job">Post Job</Nav.Link>
+                <Nav.Link as={Link} to="/organization/applications">Applications</Nav.Link>
+                <Nav.Link as={Link} to="/organization/contracts">Contracts</Nav.Link>
               </>
             )}
 
@@ -73,6 +75,10 @@ const AppNavbar = () => {
                 <Nav.Link as={Link} to="/client/post-job">Post Job</Nav.Link>
                 <Nav.Link as={Link} to="/client/my-jobs">My Jobs</Nav.Link>
                 <Nav.Link as={Link} to="/client/applications">Applications</Nav.Link>
+                 {/* ✅ CONTRACTS */}
+                <Nav.Link as={Link} to="/client/contracts"> Contracts </Nav.Link>
+                <Nav.Link as={Link} to="/client/job-history">Job History</Nav.Link>
+                
               </>
             )}
           </Nav>

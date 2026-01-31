@@ -32,6 +32,8 @@ import OrganizationDashboard from '../modules/dashboard/organization/pages/Organ
 import OrganizationProfile from '../modules/dashboard/organization/pages/OrganizationProfile';
 import OrganizationHome from '../modules/dashboard/organization/pages/OrganizationHome';
 import OrganizationPostJob from '../modules/dashboard/organization/pages/PostJob';
+import OrganizationApplications from '../modules/dashboard/organization/pages/OrganizationApplications';
+import ContractWelcome from '../modules/dashboard/organization/pages/ContractWelcome';
 
 // Client
 import ClientDashboardPage from '../modules/dashboard/client/pages/ClientDashboardPage';
@@ -39,6 +41,14 @@ import ClientProfile from '../modules/dashboard/client/pages/ClientProfile';
 import PostJob from '../modules/dashboard/client/pages/PostJob';
 import MyJobs from '../modules/dashboard/client/pages/MyJobs';
 import WorkerApplications from '../modules/dashboard/client/pages/WorkerApplications';
+// add the contact routes
+//import ClientContracts from '../modules/dashboard/client/pages/ClientContracts';
+import JobHistory from '../modules/dashboard/client/pages/JobHistory';
+//import ClientPaymentHistory from '../modules/dashboard/client/pages/ClientPaymentHistory';
+// Client – Contracts
+import ClientContracts from '../modules/dashboard/client/pages/ClientContracts';
+import CreateClientContract from '../modules/dashboard/client/pages/CreateClientContract';
+
 
 // Admin
 import UsersPage from '../modules/admin/pages/UsersPage';
@@ -56,7 +66,6 @@ const AppRoutes = () => {
       {/* -------------------------------------------------------------------
           GROUP 1: Public & User Pages (Uses MainLayout with Public Navbar) 
          ------------------------------------------------------------------- */}
-
 
       <Route element={<WorkerLayout />}>
           <Route path="/worker/dashboard" element={<WorkerDashboardPage />} />
@@ -78,6 +87,7 @@ const AppRoutes = () => {
           <Route path="/worker/raise-dispute" element={<RaiseDisputePage />} />
           <Route path="/worker/wallet" element={<WalletPage />} />
         </Route>
+        
       <Route element={<MainLayout />}>
         
         {/* Public */}
@@ -98,24 +108,45 @@ const AppRoutes = () => {
         <Route path="/supervisor/disputes" element={<DisputesPage />} />
 
         {/* Organization */}
-        <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
-        <Route path="/organization/home" element={<OrganizationHome />} />
-        <Route path="/organization/profile" element={<OrganizationProfile />} />
-        <Route path="/organization/post-job" element={<OrganizationPostJob />} />
+          <Route
+            path="/organization/dashboard"
+            element={<OrganizationDashboard />}
+          />
+          <Route path="/organization/home" element={<OrganizationHome />} />
+          <Route
+            path="/organization/profile"
+            element={<OrganizationProfile />}
+          />
+          <Route
+            path="/organization/post-job"
+            element={<OrganizationPostJob />}
+          />
+          <Route
+            path="/organization/applications"
+            element={<OrganizationApplications />}
+          />
+          <Route
+            path="/organization/contract/:applicationId"
+            element={<ContractWelcome />}
+          />
 
         {/* Client */}
-        <Route path="/client/dashboard" element={<ClientDashboardPage />} />
-        <Route path="/client/profile" element={<ClientProfile />} />
-        <Route path="/client/post-job" element={<PostJob />} />
-        <Route path="/client/my-jobs" element={<MyJobs />} />
-        <Route path="/client/applications" element={<WorkerApplications />} />
-      </Route>
+          <Route path="/client/dashboard" element={<ClientDashboardPage />} />
+          <Route path="/client/profile" element={<ClientProfile />} />
+          <Route path="/client/post-job" element={<PostJob />} />
+          <Route path="/client/my-jobs" element={<MyJobs />} />
+          <Route path="/client/applications" element={<WorkerApplications />} />
+          <Route path="/client/contracts" element={<ClientContracts />} />
+          <Route path="/client/contracts/create" element={<CreateClientContract />} />
+          <Route path="/client/job-history" element={<JobHistory />} />
 
 
       {/* -------------------------------------------------------------------
           GROUP 2: Admin Pages (Standalone - They have their own Layout)
           We DO NOT wrap these in MainLayout to avoid double navbars.
-         ------------------------------------------------------------------- */}
+        
+      ------------------------------------------------------------------- */}
+      
       <Route path="/admin/users" element={<UsersPage />} />
       <Route path="/admin/monitoring" element={<MonitoringPage />} />
       <Route path="/admin/inventory" element={<InventoryPage />} />
@@ -127,7 +158,7 @@ const AppRoutes = () => {
       <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
       {/* Route for /admin/dashboard mapped to Monitoring or a dedicated page */}
       <Route path="/admin/dashboard" element={<MonitoringPage />} />
-
+    </Route>
     </Routes>
   );
 };

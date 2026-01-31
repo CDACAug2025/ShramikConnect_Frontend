@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import useInventory from '../hooks/useInventory';
-import AdminLayout from '../layouts/AdminLayout';
+// import AdminLayout from '../layouts/AdminLayout';
 
 const InventoryPage = () => {
   const { products, loading, handleDeleteProduct, handleAddProduct, handleUpdateProduct } = useInventory();
@@ -53,15 +53,15 @@ const InventoryPage = () => {
   };
 
   if (loading) return (
-    <AdminLayout>
+    
       <div className="d-flex justify-content-center align-items-center w-100" style={{ minHeight: '60vh' }}>
         <div className="spinner-border text-primary"></div>
       </div>
-    </AdminLayout>
+    
   );
 
   return (
-    <AdminLayout>
+    
       <div className="w-100">
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
           <div>
@@ -175,7 +175,7 @@ const InventoryPage = () => {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    
   );
 };
 
