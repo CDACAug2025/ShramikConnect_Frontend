@@ -12,3 +12,14 @@ export const registerApi = async (payload) => {
   const { data } = await axiosInstance.post('/auth/register', payload);
   return data;
 };
+
+export const forgotPasswordApi = (email) =>
+  axiosInstance.post("/auth/forgot-password", { email });
+
+export const resetPasswordApi = (token, newPassword, confirmPassword) =>
+  axiosInstance.post("/auth/reset-password", {
+    token,
+    newPassword,
+    confirmPassword,
+  });
+

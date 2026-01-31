@@ -3,7 +3,7 @@ import MainLayout from '../shared/layouts/MainLayout';
 import WorkerLayout from '../shared/layouts/WorkerLayout';
 
 // Auth
-import { LoginPage, RegisterPage } from '@/modules/auth';
+import { LoginPage, RegisterPage, ForgotPassword, ResetPassword } from '@/modules/auth';
 
 // Public
 import { HomePage, AboutPage, ContactPage } from '@/modules/home';
@@ -62,7 +62,7 @@ const AppRoutes = () => {
   return (
     // ✅ CORRECT: Only <Routes> here. NO <BrowserRouter>.
     <Routes>
-
+      <Route path="/reset-password" element={<ResetPassword />} />
       {/* -------------------------------------------------------------------
           GROUP 1: Public & User Pages (Uses MainLayout with Public Navbar) 
          ------------------------------------------------------------------- */}
@@ -98,9 +98,14 @@ const AppRoutes = () => {
         {/* Auth */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
+
         
         {/* User Flows */}
         <Route path="/kyc-pending" element={<KycPendingPage />} />
+
 
         {/* Supervisor */}
         <Route path="/supervisor/dashboard" element={<SupervisorDashboardPage />} />
