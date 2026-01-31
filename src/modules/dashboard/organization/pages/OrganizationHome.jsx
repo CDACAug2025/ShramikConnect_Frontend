@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Card, Row, Col, Badge, Button, Modal, Form, Alert } from 'react-bootstrap';
+import {
+  Container,
+  Card,
+  Row,
+  Col,
+  Badge,
+  Button,
+  Modal,
+  Form,
+  Alert,
+} from 'react-bootstrap';
 import { useOrgData } from '../hooks/useOrgData';
 import axiosInstance from '@/services/axiosInstance';
 
@@ -55,7 +65,7 @@ const OrganizationHome = () => {
         category: editingJob.category,
         budget: parseFloat(editingJob.budget),
         location: editingJob.location,
-        district: editingJob.district
+        district: editingJob.district,
       });
       setSuccess('Job updated successfully!');
       setShowEditModal(false);
@@ -68,7 +78,7 @@ const OrganizationHome = () => {
   const handleDelete = async (jobId) => {
     if (window.confirm('Are you sure you want to delete this job?')) {
       try {
-        await axiosInstance.delete(`/api/jobs/${jobId}`);
+        await axiosInstance.delete(`/organization/jobs/${jobId}`);
         setSuccess('Job deleted successfully!');
         fetchJobs();
       } catch (err) {
@@ -83,11 +93,16 @@ const OrganizationHome = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'OPEN': return 'success';
-      case 'IN_PROGRESS': return 'warning';
-      case 'COMPLETED': return 'info';
-      case 'CANCELLED': return 'danger';
-      default: return 'secondary';
+      case 'OPEN':
+        return 'success';
+      case 'IN_PROGRESS':
+        return 'warning';
+      case 'COMPLETED':
+        return 'info';
+      case 'CANCELLED':
+        return 'danger';
+      default:
+        return 'secondary';
     }
   };
 
@@ -107,14 +122,14 @@ const OrganizationHome = () => {
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h3>{showMyJobs ? 'My Jobs' : 'All Jobs'}</h3>
         <div>
-          <Button 
-            variant={showMyJobs ? 'primary' : 'outline-primary'} 
+          <Button
+            variant={showMyJobs ? 'primary' : 'outline-primary'}
             className="me-2"
             onClick={() => setShowMyJobs(true)}
           >
             My Jobs
           </Button>
-          <Button 
+          <Button
             variant={!showMyJobs ? 'primary' : 'outline-primary'}
             onClick={() => setShowMyJobs(false)}
           >
@@ -136,27 +151,27 @@ const OrganizationHome = () => {
                   <Card.Text>{job.description}</Card.Text>
                   <div className="mb-2">
                     <small className="text-muted">
-                      <strong>Category:</strong> {job.category}<br/>
-                      <strong>Budget:</strong> ₹{job.budget}<br/>
+                      <strong>Category:</strong> {job.category}
+                      <br />
+                      <strong>Budget:</strong> ₹{job.budget}
+                      <br />
                       <strong>Location:</strong> {job.location}, {job.district}
                     </small>
                   </div>
                   <div className="d-flex justify-content-between align-items-center">
-                    <Badge bg={getStatusColor(job.status)}>
-                      {job.status}
-                    </Badge>
+                    <Badge bg={getStatusColor(job.status)}>{job.status}</Badge>
                     {(showMyJobs || isMyJob(job)) && (
                       <div>
-                        <Button 
-                          size="sm" 
-                          variant="outline-primary" 
+                        <Button
+                          size="sm"
+                          variant="outline-primary"
                           className="me-2"
                           onClick={() => handleEdit(job)}
                         >
                           Edit
                         </Button>
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline-danger"
                           onClick={() => handleDelete(job.jobId)}
                         >
@@ -242,9 +257,9 @@ const OrganizationHome = () => {
                 <Button type="submit" variant="primary">
                   Save Changes
                 </Button>
-                <Button 
-                  type="button" 
-                  variant="secondary" 
+                <Button
+                  type="button"
+                  variant="secondary"
                   onClick={() => setShowEditModal(false)}
                 >
                   Cancel

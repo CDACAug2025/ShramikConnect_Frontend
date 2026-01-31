@@ -60,8 +60,9 @@ const AppNavbar = () => {
               <>
                 <Nav.Link as={Link} to="/organization/dashboard">Dashboard</Nav.Link>
                 <Nav.Link as={Link} to="/organization/home">Home</Nav.Link>
-                <Nav.Link as={Link} to="/organization/profile">Profile</Nav.Link>
                 <Nav.Link as={Link} to="/organization/post-job">Post Job</Nav.Link>
+                <Nav.Link as={Link} to="/organization/applications">Applications</Nav.Link>
+                <Nav.Link as={Link} to="/organization/contracts">Contracts</Nav.Link>
               </>
             )}
 
