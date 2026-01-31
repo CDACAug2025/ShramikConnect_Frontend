@@ -39,6 +39,14 @@ import ClientProfile from '../modules/dashboard/client/pages/ClientProfile';
 import PostJob from '../modules/dashboard/client/pages/PostJob';
 import MyJobs from '../modules/dashboard/client/pages/MyJobs';
 import WorkerApplications from '../modules/dashboard/client/pages/WorkerApplications';
+// add the contact routes
+//import ClientContracts from '../modules/dashboard/client/pages/ClientContracts';
+import JobHistory from '../modules/dashboard/client/pages/JobHistory';
+//import ClientPaymentHistory from '../modules/dashboard/client/pages/ClientPaymentHistory';
+// Client – Contracts
+import ClientContracts from '../modules/dashboard/client/pages/ClientContracts';
+import CreateClientContract from '../modules/dashboard/client/pages/CreateClientContract';
+
 
 // Admin
 import UsersPage from '../modules/admin/pages/UsersPage';
@@ -56,7 +64,6 @@ const AppRoutes = () => {
       {/* -------------------------------------------------------------------
           GROUP 1: Public & User Pages (Uses MainLayout with Public Navbar) 
          ------------------------------------------------------------------- */}
-
 
       <Route element={<WorkerLayout />}>
           <Route path="/worker/dashboard" element={<WorkerDashboardPage />} />
@@ -78,6 +85,7 @@ const AppRoutes = () => {
           <Route path="/worker/raise-dispute" element={<RaiseDisputePage />} />
           <Route path="/worker/wallet" element={<WalletPage />} />
         </Route>
+        
       <Route element={<MainLayout />}>
         
         {/* Public */}
@@ -104,12 +112,14 @@ const AppRoutes = () => {
         <Route path="/organization/post-job" element={<OrganizationPostJob />} />
 
         {/* Client */}
-        <Route path="/client/dashboard" element={<ClientDashboardPage />} />
-        <Route path="/client/profile" element={<ClientProfile />} />
-        <Route path="/client/post-job" element={<PostJob />} />
-        <Route path="/client/my-jobs" element={<MyJobs />} />
-        <Route path="/client/applications" element={<WorkerApplications />} />
-      </Route>
+          <Route path="/client/dashboard" element={<ClientDashboardPage />} />
+          <Route path="/client/profile" element={<ClientProfile />} />
+          <Route path="/client/post-job" element={<PostJob />} />
+          <Route path="/client/my-jobs" element={<MyJobs />} />
+          <Route path="/client/applications" element={<WorkerApplications />} />
+          <Route path="/client/contracts" element={<ClientContracts />} />
+          <Route path="/client/contracts/create" element={<CreateClientContract />} />
+          <Route path="/client/job-history" element={<JobHistory />} />
 
 
       {/* -------------------------------------------------------------------
@@ -127,7 +137,7 @@ const AppRoutes = () => {
       <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
       {/* Route for /admin/dashboard mapped to Monitoring or a dedicated page */}
       <Route path="/admin/dashboard" element={<MonitoringPage />} />
-
+    </Route>
     </Routes>
   );
 };

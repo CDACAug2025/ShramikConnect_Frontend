@@ -1,8 +1,10 @@
 import { useApplications } from "../hooks/useApplications";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const WorkerApplications = () => {
   const { applications, loading, updateStatus } = useApplications();
+  const navigate = useNavigate();
 
   const handleAction = async (applicationId, status, name) => {
     try {
@@ -11,6 +13,18 @@ const WorkerApplications = () => {
     } catch {
       toast.error(`Failed to ${status.toLowerCase()} ${name}!`);
     }
+  };
+
+  const handleCreateContract = (app) => {
+    console.log('Application object:', app); // Debug log
+    navigate('/client/contracts/create', {
+      state: {
+        jobId: app.jobId,
+        workerId: app.applicantUserId,
+        jobTitle: app.jobTitle,
+        applicantName: app.applicantName
+      }
+    });
   };
 
   if (loading) {
@@ -82,6 +96,17 @@ const WorkerApplications = () => {
                   className="btn btn-danger btn-sm"
                 >
                   ❌ Reject
+                </button>
+              </div>
+            )}
+            
+            {app.status === 'SHORTLISTED' && (
+              <div className="d-flex justify-content-end">
+                <button
+                  onClick={() => handleCreateContract(app)}
+                  className="btn btn-primary btn-sm"
+                >
+                  📄 Contract
                 </button>
               </div>
             )}
