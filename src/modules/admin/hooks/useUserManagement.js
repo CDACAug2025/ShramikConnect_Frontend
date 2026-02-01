@@ -1,10 +1,5 @@
 import { useEffect, useState } from 'react';
-
-// ✅ TRY THIS PATH (Goes up 3 levels to 'src/services')
 import AdminService from '../../../services/adminService'; 
-
-// IF the above fails, try with Capital 'A':
-// import AdminService from '../../../services/AdminService';
 
 const useUserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -15,9 +10,10 @@ const useUserManagement = () => {
     try {
       setLoading(true);
       const res = await AdminService.getAllUsers();
-      setUsers(res.data || []);
+      // ✅ Ensure we handle nested data if your API wraps the list
+      setUsers(Array.isArray(res) ? res : res.data || []); 
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching users:", err);
       setError('Failed to load users');
     } finally {
       setLoading(false);
@@ -33,11 +29,12 @@ const useUserManagement = () => {
     if (!window.confirm(`Are you sure you want to change status to ${newStatus}?`)) return;
 
     try {
+      // ✅ Calling real backend endpoint
       await AdminService.updateUserStatus(userId, newStatus);
       setUsers(prev => prev.map(u => u.userId === userId ? { ...u, status: newStatus } : u));
     } catch (err) {
-      console.error(err);
-      alert("Failed to update status.");
+      console.error("Status update error:", err);
+      alert("Failed to update status. Please try again.");
     }
   };
 

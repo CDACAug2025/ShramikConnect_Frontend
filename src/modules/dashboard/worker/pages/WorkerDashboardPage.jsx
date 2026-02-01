@@ -40,7 +40,7 @@ const WorkerDashboardPage = () => {
                                     <Badge bg="primary" pill>{stats.applied + stats.shortlisted}</Badge>
                                 </ListGroup.Item>
                                 <ListGroup.Item className="d-flex justify-content-between align-items-center px-0">
-                                    Shortlisted (Ready for Interview)
+                                    Shortlisted 
                                     <Badge bg="warning" text="dark" pill>{stats.shortlisted}</Badge>
                                 </ListGroup.Item>
                             </ListGroup>

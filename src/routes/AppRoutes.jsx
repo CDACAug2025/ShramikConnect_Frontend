@@ -34,6 +34,7 @@ import OrganizationHome from '../modules/dashboard/organization/pages/Organizati
 import OrganizationPostJob from '../modules/dashboard/organization/pages/PostJob';
 import OrganizationApplications from '../modules/dashboard/organization/pages/OrganizationApplications';
 import ContractWelcome from '../modules/dashboard/organization/pages/ContractWelcome';
+import OrganizationPayments from '../modules/dashboard/organization/pages/OrganizationPayments';
 
 // Client
 import ClientDashboardPage from '../modules/dashboard/client/pages/ClientDashboardPage';
@@ -57,6 +58,7 @@ import InventoryPage from '../modules/admin/pages/InventoryPage';
 import PaymentsPage from '../modules/admin/pages/PaymentsPage';
 import SubscriptionsPage from '../modules/admin/pages/SubscriptionsPage';
 import SettingsPage from '../modules/admin/pages/SettingsPage';
+
 
 const AppRoutes = () => {
   return (
@@ -129,6 +131,7 @@ const AppRoutes = () => {
             path="/organization/contract/:applicationId"
             element={<ContractWelcome />}
           />
+          <Route path="/organization/payments" element={<OrganizationPayments />} />
 
         {/* Client */}
           <Route path="/client/dashboard" element={<ClientDashboardPage />} />
