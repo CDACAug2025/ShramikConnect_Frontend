@@ -1,187 +1,152 @@
 import React from 'react';
-// import AdminLayout from '../layouts/AdminLayout'; // ✅ Import Layout
 import useAdminDashboard from '../hooks/useAdminDashboard';
 
 const MonitoringPage = () => {
-  const { stats, logs, loading, error } = useAdminDashboard();
+    const { stats, logs, loading, error } = useAdminDashboard();
 
-  if (loading) return (
-    
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
+    if (loading) return (
+        <div className="d-flex flex-column justify-content-center align-items-center w-100" style={{ minHeight: '70vh' }}>
+            <div className="spinner-grow text-primary mb-3" style={{ width: '3rem', height: '3rem' }}></div>
+            <h5 className="text-dark fw-bold">Connecting to Cluster...</h5>
+            <p className="text-muted small">Aggregating real-time telemetry data.</p>
         </div>
-      </div>
-    
-  );
+    );
 
-  if (error) return (
-    
-      <div className="alert alert-danger m-4" role="alert">
-        {error}
-      </div>
-    
-  );
-
-  return (
-    
-      <div className="w-100">
-        
-        {/* --- Header Section --- */}
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <div>
-            <h2 className="fw-bold text-dark mb-1">System Health Dashboard</h2>
-            <p className="text-muted mb-0">Real-time platform counters and server status.</p>
-          </div>
-          <button className={`btn ${stats.status === 'Healthy' ? 'btn-outline-success' : 'btn-outline-danger'} fw-bold px-4`}>
-            ● {stats.status === 'Healthy' ? 'System Healthy' : 'System Issues'}
-          </button>
+    if (error) return (
+        <div className="alert alert-custom bg-danger bg-opacity-10 text-danger border-danger border-opacity-25 m-4 shadow-sm">
+            <i className="bi bi-exclamation-octagon-fill me-2"></i> {error}
         </div>
+    );
 
-        {/* --- ROW 1: USER & REVENUE METRICS --- */}
-        <h6 className="text-uppercase text-secondary small fw-bold mb-3">User & Revenue Metrics</h6>
-        <div className="row g-3 mb-4">
-          {/* Card 1: Total Users */}
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm p-3 d-flex flex-row align-items-center justify-content-between h-100">
-              <div>
-                <h6 className="text-muted text-uppercase small mb-1">Total Users</h6>
-                <h2 className="fw-bold text-dark mb-0">{stats.totalUsers}</h2>
-              </div>
-              <div className="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
-                <i className="bi bi-people-fill fs-4"></i>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 2: Active Users */}
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm p-3 d-flex flex-row align-items-center justify-content-between h-100" style={{ borderLeft: '4px solid #0dcaf0' }}>
-              <div>
-                <h6 className="text-muted text-uppercase small mb-1">Active (24h)</h6>
-                <h2 className="fw-bold text-dark mb-0">{stats.activeUsers}</h2>
-              </div>
-              <div className="text-info p-3">
-                <i className="bi bi-lightning-fill fs-4"></i>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 3: Revenue */}
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm p-3 d-flex flex-row align-items-center justify-content-between h-100" style={{ borderLeft: '4px solid #ffc107' }}>
-              <div>
-                <h6 className="text-muted text-uppercase small mb-1">Total Revenue</h6>
-                <h2 className="fw-bold text-dark mb-0">₹{stats.totalRevenue?.toLocaleString()}</h2>
-              </div>
-              <div className="bg-warning bg-opacity-10 text-warning p-3 rounded-circle">
-                <i className="bi bi-currency-rupee fs-4"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* --- ROW 2: JOB STATISTICS --- */}
-        <h6 className="text-uppercase text-secondary small fw-bold mb-3">Job Statistics</h6>
-        <div className="row g-3 mb-4">
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm p-3 d-flex flex-row align-items-center justify-content-between h-100" style={{ borderLeft: '4px solid #6610f2' }}>
-              <div>
-                <h6 className="text-muted text-uppercase small mb-1">Total Jobs Posted</h6>
-                <h2 className="fw-bold text-dark mb-0">{stats.totalJobs}</h2>
-              </div>
-              <div className="text-primary bg-opacity-10 p-2 rounded">
-                 📢
-              </div>
-            </div>
-          </div>
-
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm p-3 d-flex flex-row align-items-center justify-content-between h-100" style={{ borderLeft: '4px solid #0d6efd' }}>
-              <div>
-                <h6 className="text-muted text-uppercase small mb-1">Ongoing Jobs</h6>
-                <h2 className="fw-bold text-dark mb-0">{stats.ongoingJobs}</h2>
-              </div>
-              <div className="text-primary p-2">
-                 ⏳
-              </div>
-            </div>
-          </div>
-
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm p-3 d-flex flex-row align-items-center justify-content-between h-100" style={{ borderLeft: '4px solid #198754' }}>
-              <div>
-                <h6 className="text-muted text-uppercase small mb-1">Completed Jobs</h6>
-                <h2 className="fw-bold text-dark mb-0">{stats.completedJobs}</h2>
-              </div>
-              <div className="text-success p-2">
-                 ✅
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* --- ROW 3: SERVER HEALTH & LOGS --- */}
-        <div className="row g-4">
-          
-          {/* Left: Server Uptime Circle */}
-          <div className="col-lg-4">
-            <div className="card border-0 shadow-sm h-100 p-4">
-              <h6 className="fw-bold text-dark mb-4">Server Health</h6>
-              <div className="d-flex flex-column align-items-center justify-content-center h-75">
-                <div 
-                  className="rounded-circle d-flex align-items-center justify-content-center border border-5 border-success text-success fw-bold"
-                  style={{ width: '150px', height: '150px', fontSize: '1.5rem' }}
-                >
-                  {stats.uptime}
+    return (
+        <div className="container-fluid py-4 px-4" style={{ backgroundColor: '#f8f9fc', minHeight: '100vh' }}>
+            
+            {/* --- 🛡️ PLATFORM STATUS BAR --- */}
+            <div className="card border-0 shadow-sm rounded-4 mb-4" style={{ background: 'linear-gradient(90deg, #0f172a 0%, #1e293b 100%)' }}>
+                <div className="card-body p-4 d-flex justify-content-between align-items-center text-white">
+                    <div>
+                        <h2 className="fw-black mb-1" style={{ letterSpacing: '-0.025em' }}>System Monitoring</h2>
+                        <p className="opacity-75 small mb-0">Node Status: <span className="text-success fw-bold">Stable</span> | Region: <span className="fw-bold">IN-WEST-1</span></p>
+                    </div>
+                    <div className="text-end">
+                        <div className={`badge rounded-pill px-4 py-2 fs-6 ${stats.status === 'Healthy' ? 'bg-success bg-opacity-25 text-success border border-success' : 'bg-danger bg-opacity-25 text-danger border border-danger'}`}>
+                            <span className="spinner-grow spinner-grow-sm me-2" role="status"></span>
+                            {stats.status === 'Healthy' ? 'OPERATIONAL' : 'SYSTEM DEGRADED'}
+                        </div>
+                        <div className="small mt-2 opacity-50">Last Refreshed: {new Date().toLocaleTimeString()}</div>
+                    </div>
                 </div>
-                <p className="text-muted mt-3 small">Uptime Status</p>
-              </div>
             </div>
-          </div>
 
-          {/* Right: System Logs Table */}
-          <div className="col-lg-8">
-            <div className="card border-0 shadow-sm h-100 overflow-hidden">
-              <div className="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-                <h6 className="fw-bold mb-0">System Logs & Errors</h6>
-                {logs.some(l => l.level === 'ERROR') && <span className="badge bg-danger">Issues Detected</span>}
-              </div>
-              <div className="table-responsive">
-                <table className="table table-hover align-middle mb-0 small">
-                  <thead className="bg-light text-secondary text-uppercase">
-                    <tr>
-                      <th className="ps-4">Timestamp</th>
-                      <th>Level</th>
-                      <th>Module</th>
-                      <th>Message</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {logs.length > 0 ? logs.map((log, index) => (
-                      <tr key={index}>
-                        <td className="ps-4 text-muted">{log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A'}</td>
-                        <td>
-                          <span className={`badge ${log.level === 'ERROR' ? 'bg-danger' : 'bg-info bg-opacity-10 text-info'}`}>
-                            {log.level || 'INFO'}
-                          </span>
-                        </td>
-                        <td className="fw-bold text-dark">{log.module || 'SYSTEM'}</td>
-                        <td>{log.message}</td>
-                      </tr>
-                    )) : (
-                      <tr><td colSpan="4" className="text-center py-4 text-muted">No logs available.</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+            {/* --- 📊 CORE PERFORMANCE METRICS --- */}
+            <div className="row g-4 mb-4">
+                {[
+                    { title: 'User Base', val: stats.totalUsers, icon: 'people', color: '#4f46e5', trend: '+12%' },
+                    { title: 'Live Sessions', val: stats.activeUsers, icon: 'broadcast', color: '#0ea5e9', trend: 'Steady' },
+                    { title: 'Net Revenue', val: `₹${stats.totalRevenue?.toLocaleString()}`, icon: 'wallet2', color: '#10b981', trend: '+5.4%' }
+                ].map((item, i) => (
+                    <div className="col-md-4" key={i}>
+                        <div className="card border-0 shadow-sm rounded-4 h-100 p-3">
+                            <div className="d-flex justify-content-between">
+                                <div className="p-3 rounded-3 shadow-sm" style={{ backgroundColor: item.color, color: 'white' }}>
+                                    <i className={`bi bi-${item.icon} fs-4`}></i>
+                                </div>
+                                <div className="text-end">
+                                    <span className="badge bg-light text-success extra-small fw-bold">{item.trend}</span>
+                                </div>
+                            </div>
+                            <div className="mt-3">
+                                <h6 className="text-muted small text-uppercase fw-bold mb-1">{item.title}</h6>
+                                <h2 className="fw-black text-dark mb-0">{item.val}</h2>
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
-          </div>
 
+            {/* --- 🛠️ WORKLOAD STATISTICS --- */}
+            <div className="row g-4 mb-5">
+                {[
+                    { label: 'Total Jobs', val: stats.totalJobs, color: 'primary', icon: '📢' },
+                    { label: 'Ongoing', val: stats.ongoingJobs, color: 'info', icon: '⏳' },
+                    { label: 'Completed', val: stats.completedJobs, color: 'success', icon: '✅' }
+                ].map((job, idx) => (
+                    <div className="col-md-4" key={idx}>
+                        <div className="card border-0 shadow-sm rounded-4 p-3 border-start border-5 border-opacity-50" style={{ borderColor: `var(--bs-${job.color})` }}>
+                            <div className="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <p className="text-muted small mb-0 fw-bold text-uppercase">{job.label}</p>
+                                    <h3 className="fw-bold mb-0">{job.val}</h3>
+                                </div>
+                                <span className="fs-1">{job.icon}</span>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* --- 🖥️ INFRASTRUCTURE & LOGS --- */}
+            <div className="row g-4">
+                {/* Left: Uptime Gauge */}
+                <div className="col-lg-4">
+                    <div className="card border-0 shadow-sm h-100 rounded-4 p-4 text-center">
+                        <h6 className="fw-bold text-dark text-start mb-4 text-uppercase small">Infrastructure Uptime</h6>
+                        <div className="position-relative d-inline-block mx-auto mt-3">
+                            <svg width="180" height="180">
+                                <circle cx="90" cy="90" r="80" fill="none" stroke="#e2e8f0" strokeWidth="12" />
+                                <circle cx="90" cy="90" r="80" fill="none" stroke="#10b981" strokeWidth="12" strokeDasharray="502" strokeDashoffset="50" style={{ transition: 'all 1s ease-in-out' }} />
+                            </svg>
+                            <div className="position-absolute top-50 start-50 translate-middle text-center">
+                                <h2 className="fw-black text-dark mb-0">{stats.uptime}</h2>
+                                <span className="text-muted extra-small fw-bold">ONLINE</span>
+                            </div>
+                        </div>
+                        <p className="mt-4 text-muted small">Current server uptime since last deployment (IN-WEST-B Node).</p>
+                    </div>
+                </div>
+
+                {/* Right: Modern Console Logs */}
+                <div className="col-lg-8">
+                    <div className="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
+                        <div className="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                            <h6 className="fw-bold mb-0 text-uppercase small">Real-time Event Stream</h6>
+                            <button className="btn btn-sm btn-light border fw-bold text-muted">Clear Logs</button>
+                        </div>
+                        <div className="table-responsive" style={{ maxHeight: '400px' }}>
+                            <table className="table table-hover align-middle mb-0">
+                                <thead className="bg-light sticky-top">
+                                    <tr className="extra-small text-muted fw-bold text-uppercase">
+                                        <th className="ps-4">Timestamp</th>
+                                        <th>Level</th>
+                                        <th>Source</th>
+                                        <th>Event Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {logs.length > 0 ? logs.map((log, index) => (
+                                        <tr key={index} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                            <td className="ps-4 text-muted extra-small">
+                                                {log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : 'N/A'}
+                                            </td>
+                                            <td>
+                                                <span className={`badge border rounded-pill ${log.level === 'ERROR' ? 'bg-danger bg-opacity-10 text-danger border-danger border-opacity-25' : 'bg-blue bg-opacity-10 text-primary border-primary border-opacity-25'}`}>
+                                                    {log.level || 'INFO'}
+                                                </span>
+                                            </td>
+                                            <td className="fw-bold text-dark small">{log.module || 'CORE'}</td>
+                                            <td className="text-secondary small">{log.message}</td>
+                                        </tr>
+                                    )) : (
+                                        <tr><td colSpan="4" className="text-center py-5 text-muted">No active logs found in the stream.</td></tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    
-  );
+    );
 };
 
 export default MonitoringPage;

@@ -1,32 +1,43 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import axiosInstance from '../../../services/axiosInstance'; 
 
 const usePayments = () => {
   const [transactions, setTransactions] = useState([]);
-  const [escrowFunds, setEscrowFunds] = useState([]); // Keeping mock for Escrow if no DB table yet
   const [loading, setLoading] = useState(true);
 
   // ✅ FETCH REAL DATA FROM BACKEND
-  const fetchPayments = async () => {
+  const fetchPayments = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/admin/payments');
-      const data = await response.json();
-      setTransactions(data); // Set Real DB Data
+      setLoading(true);
+      // Calls @GetMapping("/all") in your PaymentOrderController
+      const response = await axiosInstance.get('/payments/all'); 
+      setTransactions(response.data || []);
     } catch (error) {
-      console.error("Error fetching payments:", error);
+      console.error("Error fetching real database payments:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchPayments();
-  }, []);
+  }, [fetchPayments]);
 
-  // ... (Keep your existing downloadReport and releaseEscrow functions here) ...
-  const downloadReport = () => { /* ... keep existing logic ... */ };
-  const releaseEscrow = (id) => { /* ... keep existing logic ... */ };
+  // ✅ REAL RELEASE LOGIC
+  const releaseEscrow = async (contractId) => {
+    if (!window.confirm("Are you sure you want to release these funds to the worker?")) return;
+    
+    try {
+      // Calls @PostMapping("/release/{contractId}") in your Backend
+      await axiosInstance.post(`/payments/release/${contractId}`); 
+      alert("Funds released successfully!");
+      fetchPayments(); // Refresh real data from DB
+    } catch (error) {
+      alert("Failed to release funds. Ensure the job is marked as completed.");
+    }
+  };
 
-  return { transactions, escrowFunds, loading, downloadReport, releaseEscrow };
+  return { transactions, loading, releaseEscrow, fetchPayments };
 };
 
 export default usePayments;

@@ -1,17 +1,16 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import WorkerNavbar from '@/modules/dashboard/worker/components/WorkerNavbar';
-import WorkerFooter from '@/modules/dashboard/worker/components/WorkerFooter';
+import AppNavbar from '../components/AppNavbar'; // ✅ Use the centralized navbar
 
 const WorkerLayout = () => {
   return (
-    <div className="d-flex flex-column min-vh-100 bg-light">
-      <WorkerNavbar />
-      <main className="flex-grow-1">
+    <>
+      <AppNavbar /> 
+      <div className="container-fluid py-4">
+        {/* ✅ This renders Ajay's Dashboard, Wallet, etc. */}
         <Outlet /> 
-      </main>
-      <WorkerFooter />
-    </div>
+      </div>
+    </>
   );
 };
 
