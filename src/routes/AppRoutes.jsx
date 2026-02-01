@@ -1,167 +1,130 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import MainLayout from '../shared/layouts/MainLayout';
-import WorkerLayout from '../shared/layouts/WorkerLayout';
+import MainLayout from '@/shared/layouts/MainLayout';
 
-// Auth
-import { LoginPage, RegisterPage } from '@/modules/auth';
+// ================= AUTH =================
+import { LoginPage, RegisterPage, ForgotPassword, ResetPassword } from '@/modules/auth';
 
-// Public
+// ================= PUBLIC =================
 import { HomePage, AboutPage, ContactPage } from '@/modules/home';
 
-// KYC
+// ================= KYC =================
 import KycPendingPage from '@/modules/kyc/pages/KycPendingPage';
 import KycListPage from '@/modules/kyc/pages/KycListPage';
 
-// Supervisor
-import SupervisorDashboardPage from '../modules/dashboard/supervisor/pages/SupervisorDashboardPage';
-import { DisputesPage } from '../modules/disputes';
+// ================= SUPERVISOR =================
+import SupervisorDashboardPage from '@/modules/dashboard/supervisor/pages/SupervisorDashboardPage';
+import { DisputesPage } from '@/modules/disputes';
 
-// ✅ Worker Dashboard & Sub-Page Imports
-import WorkerDashboardPage from '../modules/dashboard/worker/pages/WorkerDashboardPage';
-import FindJobsPage from '../modules/dashboard/worker/pages/FindJobsPage';
-import MyApplicationsPage from '../modules/dashboard/worker/pages/MyApplicationsPage';
-import WorkerProfilePage from '../modules/dashboard/worker/pages/WorkerProfilePage';
-import WorkerSkillsPage from '../modules/dashboard/worker/pages/WorkerSkillsPage';
-import RaiseDisputePage from '../modules/dashboard/worker/pages/RaiseDisputePage';
-import WalletPage from '../modules/dashboard/worker/pages/WalletPage';
-import WorkerJobHistoryPage from '../modules/dashboard/worker/pages/WorkerJobHistoryPage';
-import ActiveJobsPage from '../modules/dashboard/worker/pages/ActiveJobsPage';
+// ================= WORKER =================
+import WorkerDashboardPage from '@/modules/dashboard/worker/pages/WorkerDashboardPage';
+import FindJobsPage from '@/modules/dashboard/worker/pages/FindJobsPage';
+import MyApplicationsPage from '@/modules/dashboard/worker/pages/MyApplicationsPage';
+import ActiveJobsPage from '@/modules/dashboard/worker/pages/ActiveJobsPage';
+import WorkerProfilePage from '@/modules/dashboard/worker/pages/WorkerProfilePage';
+import WorkerSkillsPage from '@/modules/dashboard/worker/pages/WorkerSkillsPage';
+import WorkerJobHistoryPage from '@/modules/dashboard/worker/pages/WorkerJobHistoryPage';
+import RaiseDisputePage from '@/modules/dashboard/worker/pages/RaiseDisputePage';
+import WalletPage from '@/modules/dashboard/worker/pages/WalletPage';
 
-// Organization
-import OrganizationDashboard from '../modules/dashboard/organization/pages/OrganizationDashboard';
-import OrganizationProfile from '../modules/dashboard/organization/pages/OrganizationProfile';
-import OrganizationHome from '../modules/dashboard/organization/pages/OrganizationHome';
-import OrganizationPostJob from '../modules/dashboard/organization/pages/PostJob';
-import OrganizationApplications from '../modules/dashboard/organization/pages/OrganizationApplications';
-import ContractWelcome from '../modules/dashboard/organization/pages/ContractWelcome';
-import OrganizationPayments from '../modules/dashboard/organization/pages/OrganizationPayments';
+// ================= ORGANIZATION =================
+import OrganizationDashboard from '@/modules/dashboard/organization/pages/OrganizationDashboard';
+import OrganizationProfile from '@/modules/dashboard/organization/pages/OrganizationProfile';
+import OrganizationHome from '@/modules/dashboard/organization/pages/OrganizationHome';
+import OrganizationPostJob from '@/modules/dashboard/organization/pages/PostJob';
+import OrganizationApplications from '@/modules/dashboard/organization/pages/OrganizationApplications';
+import OrganizationPayments from '@/modules/dashboard/organization/pages/OrganizationPayments';
 
-// Client
-import ClientDashboardPage from '../modules/dashboard/client/pages/ClientDashboardPage';
-import ClientProfile from '../modules/dashboard/client/pages/ClientProfile';
-import PostJob from '../modules/dashboard/client/pages/PostJob';
-import MyJobs from '../modules/dashboard/client/pages/MyJobs';
-import WorkerApplications from '../modules/dashboard/client/pages/WorkerApplications';
-// add the contact routes
-//import ClientContracts from '../modules/dashboard/client/pages/ClientContracts';
-import JobHistory from '../modules/dashboard/client/pages/JobHistory';
-//import ClientPaymentHistory from '../modules/dashboard/client/pages/ClientPaymentHistory';
-// Client – Contracts
-import ClientContracts from '../modules/dashboard/client/pages/ClientContracts';
-import CreateClientContract from '../modules/dashboard/client/pages/CreateClientContract';
+// ================= CLIENT =================
+import ClientDashboardPage from '@/modules/dashboard/client/pages/ClientDashboardPage';
+import ClientProfile from '@/modules/dashboard/client/pages/ClientProfile';
+import PostJob from '@/modules/dashboard/client/pages/PostJob';
+import MyJobs from '@/modules/dashboard/client/pages/MyJobs';
+import WorkerApplications from '@/modules/dashboard/client/pages/WorkerApplications';
+import JobHistory from '@/modules/dashboard/client/pages/JobHistory';
+import ClientContracts from '@/modules/dashboard/client/pages/ClientContracts';
+import CreateClientContract from '@/modules/dashboard/client/pages/CreateClientContract';
 
+// ================= CONTRACTS (SHARED) =================
+import ContractPage from '@/modules/contracts/pages/ContractPage';
 
-// Admin
-import UsersPage from '../modules/admin/pages/UsersPage';
-import MonitoringPage from '../modules/admin/pages/MonitoringPage';
-import InventoryPage from '../modules/admin/pages/InventoryPage';
-import PaymentsPage from '../modules/admin/pages/PaymentsPage';
-import SubscriptionsPage from '../modules/admin/pages/SubscriptionsPage';
-import SettingsPage from '../modules/admin/pages/SettingsPage';
-
+// ================= ADMIN =================
+import UsersPage from '@/modules/admin/pages/UsersPage';
+import MonitoringPage from '@/modules/admin/pages/MonitoringPage';
+import InventoryPage from '@/modules/admin/pages/InventoryPage';
+import PaymentsPage from '@/modules/admin/pages/PaymentsPage';
+import SubscriptionsPage from '@/modules/admin/pages/SubscriptionsPage';
+import SettingsPage from '@/modules/admin/pages/SettingsPage';
 
 const AppRoutes = () => {
   return (
-    // ✅ CORRECT: Only <Routes> here. NO <BrowserRouter>.
     <Routes>
 
-      {/* -------------------------------------------------------------------
-          GROUP 1: Public & User Pages (Uses MainLayout with Public Navbar) 
-         ------------------------------------------------------------------- */}
+      {/* ================= PASSWORD RESET ================= */}
+      <Route path="/reset-password" element={<ResetPassword />} />
 
-      <Route element={<WorkerLayout />}>
-          <Route path="/worker/dashboard" element={<WorkerDashboardPage />} />
-          
-          {/* Module 1: Profile & KYC */}
-          <Route path="/worker/profile" element={<WorkerProfilePage />} /> 
-          <Route path="/worker/skills" element={<WorkerSkillsPage />} />
-          
-          {/* Module 2: Job Discovery */}
-          <Route path="/worker/find-jobs" element={<FindJobsPage />} />
-          <Route path="/worker/my-applications" element={<MyApplicationsPage />} />
-          
-          {/* ✅ Module 3: Active Jobs & History */}
-          {/* Updated this route to point to ActiveJobsPage instead of WorkerDashboardPage */}
-          <Route path="/worker/active-jobs" element={<ActiveJobsPage />} />
-          <Route path="/worker/history" element={<WorkerJobHistoryPage />} />
-          
-          {/* ✅ Module 5 & 6: Wallet and Disputes */}
-          <Route path="/worker/raise-dispute" element={<RaiseDisputePage />} />
-          <Route path="/worker/wallet" element={<WalletPage />} />
-        </Route>
-        
+      {/* ================= MAIN LAYOUT (NAVBAR + FOOTER) ================= */}
       <Route element={<MainLayout />}>
-        
-        {/* Public */}
+
+        {/* ---------- PUBLIC ---------- */}
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
 
-        {/* Auth */}
+        {/* ---------- AUTH ---------- */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        
-        {/* User Flows */}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
+        {/* ---------- KYC ---------- */}
         <Route path="/kyc-pending" element={<KycPendingPage />} />
 
-        {/* Supervisor */}
+        {/* ---------- SUPERVISOR ---------- */}
         <Route path="/supervisor/dashboard" element={<SupervisorDashboardPage />} />
         <Route path="/supervisor/kyc-list" element={<KycListPage />} />
         <Route path="/supervisor/disputes" element={<DisputesPage />} />
 
-        {/* Organization */}
-          <Route
-            path="/organization/dashboard"
-            element={<OrganizationDashboard />}
-          />
-          <Route path="/organization/home" element={<OrganizationHome />} />
-          <Route
-            path="/organization/profile"
-            element={<OrganizationProfile />}
-          />
-          <Route
-            path="/organization/post-job"
-            element={<OrganizationPostJob />}
-          />
-          <Route
-            path="/organization/applications"
-            element={<OrganizationApplications />}
-          />
-          <Route
-            path="/organization/contract/:applicationId"
-            element={<ContractWelcome />}
-          />
-          <Route path="/organization/payments" element={<OrganizationPayments />} />
+        {/* ---------- WORKER ---------- */}
+        <Route path="/worker/dashboard" element={<WorkerDashboardPage />} />
+        <Route path="/worker/find-jobs" element={<FindJobsPage />} />
+        <Route path="/worker/my-applications" element={<MyApplicationsPage />} />
+        <Route path="/worker/active-jobs" element={<ActiveJobsPage />} />
+        <Route path="/worker/contracts" element={<ContractPage />} />
+        <Route path="/worker/profile" element={<WorkerProfilePage />} />
+        <Route path="/worker/skills" element={<WorkerSkillsPage />} />
+        <Route path="/worker/history" element={<WorkerJobHistoryPage />} />
+        <Route path="/worker/raise-dispute" element={<RaiseDisputePage />} />
+        <Route path="/worker/wallet" element={<WalletPage />} />
 
-        {/* Client */}
-          <Route path="/client/dashboard" element={<ClientDashboardPage />} />
-          <Route path="/client/profile" element={<ClientProfile />} />
-          <Route path="/client/post-job" element={<PostJob />} />
-          <Route path="/client/my-jobs" element={<MyJobs />} />
-          <Route path="/client/applications" element={<WorkerApplications />} />
-          <Route path="/client/contracts" element={<ClientContracts />} />
-          <Route path="/client/contracts/create" element={<CreateClientContract />} />
-          <Route path="/client/job-history" element={<JobHistory />} />
+        {/* ---------- ORGANIZATION ---------- */}
+        <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
+        <Route path="/organization/home" element={<OrganizationHome />} />
+        <Route path="/organization/profile" element={<OrganizationProfile />} />
+        <Route path="/organization/post-job" element={<OrganizationPostJob />} />
+        <Route path="/organization/applications" element={<OrganizationApplications />} />
+        <Route path="/organization/contracts" element={<ContractPage />} />
+        <Route path="/organization/payments" element={<OrganizationPayments />} />
 
+        {/* ---------- CLIENT ---------- */}
+        <Route path="/client/dashboard" element={<ClientDashboardPage />} />
+        <Route path="/client/profile" element={<ClientProfile />} />
+        <Route path="/client/post-job" element={<PostJob />} />
+        <Route path="/client/my-jobs" element={<MyJobs />} />
+        <Route path="/client/applications" element={<WorkerApplications />} />
+        <Route path="/client/contracts" element={<ClientContracts />} />
+        <Route path="/client/contracts/create" element={<CreateClientContract />} />
+        <Route path="/client/job-history" element={<JobHistory />} />
 
-      {/* -------------------------------------------------------------------
-          GROUP 2: Admin Pages (Standalone - They have their own Layout)
-          We DO NOT wrap these in MainLayout to avoid double navbars.
-        
-      ------------------------------------------------------------------- */}
-      
-      <Route path="/admin/users" element={<UsersPage />} />
-      <Route path="/admin/monitoring" element={<MonitoringPage />} />
-      <Route path="/admin/inventory" element={<InventoryPage />} />
-      <Route path="/admin/payments" element={<PaymentsPage />} />
-      <Route path="/admin/subscriptions" element={<SubscriptionsPage />} />
-      <Route path="/admin/settings" element={<SettingsPage />} />
+        {/* ---------- ADMIN ---------- */}
+        <Route path="/admin/users" element={<UsersPage />} />
+        <Route path="/admin/monitoring" element={<MonitoringPage />} />
+        <Route path="/admin/inventory" element={<InventoryPage />} />
+        <Route path="/admin/payments" element={<PaymentsPage />} />
+        <Route path="/admin/subscriptions" element={<SubscriptionsPage />} />
+        <Route path="/admin/settings" element={<SettingsPage />} />
+        <Route path="/admin/dashboard" element={<MonitoringPage />} />
+        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
 
-      {/* Default Redirect for Admin Root */}
-      <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-      {/* Route for /admin/dashboard mapped to Monitoring or a dedicated page */}
-      <Route path="/admin/dashboard" element={<MonitoringPage />} />
-    </Route>
+      </Route>
     </Routes>
   );
 };

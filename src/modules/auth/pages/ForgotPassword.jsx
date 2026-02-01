@@ -1,41 +1,51 @@
-import { useState } from "react";
-import { forgotPasswordApi } from "../services/authApi";
+import { useState } from 'react';
+import { Form, Button, Card, Container, Alert } from 'react-bootstrap';
+import { forgotPasswordApi } from '../services/authApi';
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
 
-  const submit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setError('');
+    setSuccess('');
+
     try {
       await forgotPasswordApi(email);
-      alert("Password reset link sent to email");
+      setSuccess('Password reset link sent to your email');
     } catch (err) {
-      alert(err.response?.data || "Error sending email");
-    } finally {
-      setLoading(false);
+      setError('Email not found');
     }
   };
 
   return (
-    <div className="container mt-5">
-      <h3>Forgot Password</h3>
+    <Container className="d-flex justify-content-center align-items-center min-vh-100">
+      <Card className="p-4 shadow" style={{ width: '420px' }}>
+        <h4 className="text-center mb-3">Forgot Password</h4>
 
-      <form onSubmit={submit}>
-        <input
-          className="form-control mb-3"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        {success && <Alert variant="success">{success}</Alert>}
+        {error && <Alert variant="danger">{error}</Alert>}
 
-        <button className="btn btn-primary w-100" disabled={loading}>
-          {loading ? "Sending..." : "Send Reset Link"}
-        </button>
-      </form>
-    </div>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label>Email address</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="Enter your registered email"
+              value={email}
+              required
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </Form.Group>
+
+          <Button type="submit" className="w-100">
+            Send Reset Link
+          </Button>
+        </Form>
+      </Card>
+    </Container>
   );
 };
 

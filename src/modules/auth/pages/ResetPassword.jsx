@@ -1,87 +1,69 @@
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { resetPasswordApi } from "../services/authApi";
-
-const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+import { useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Form, Button, Card, Container, Alert } from 'react-bootstrap';
+import { resetPasswordApi } from '../services/authApi';
 
 const ResetPassword = () => {
   const [params] = useSearchParams();
   const navigate = useNavigate();
-  const token = params.get("token");
+  const token = params.get('token');
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
 
-  const validatePassword = () => {
-    if (!passwordRegex.test(password)) {
-      return "Password must be at least 8 characters long and include 1 uppercase letter, 1 number, and 1 special character.";
-    }
-    if (password !== confirmPassword) {
-      return "Passwords do not match.";
-    }
-    return null;
-  };
-
-  const submit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
 
-    const validationError = validatePassword();
-    if (validationError) {
-      setError(validationError);
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
 
     try {
       await resetPasswordApi(token, password, confirmPassword);
-      alert("Password reset successful. Please login.");
-      navigate("/login");
+      setSuccess('Password reset successful');
+      setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
-      setError(err.response?.data || "Invalid or expired token");
+      setError('Invalid or expired token');
     }
   };
 
   return (
-    <div className="container mt-5">
-      <h3 className="mb-3">Reset Password</h3>
+    <Container className="d-flex justify-content-center align-items-center min-vh-100">
+      <Card className="p-4 shadow" style={{ width: '420px' }}>
+        <h4 className="text-center mb-3">Reset Password</h4>
 
-      <form onSubmit={submit}>
-        <input
-          type="password"
-          className="form-control mb-3"
-          placeholder="New Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        {success && <Alert variant="success">{success}</Alert>}
+        {error && <Alert variant="danger">{error}</Alert>}
 
-        <input
-          type="password"
-          className="form-control mb-3"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label>New Password</Form.Label>
+            <Form.Control
+              type="password"
+              required
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </Form.Group>
 
-        {error && (
-          <div className="alert alert-danger">
-            {error}
-          </div>
-        )}
+          <Form.Group className="mb-3">
+            <Form.Label>Confirm Password</Form.Label>
+            <Form.Control
+              type="password"
+              required
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </Form.Group>
 
-        <ul className="small text-muted mb-3">
-          <li>Minimum 8 characters</li>
-          <li>At least 1 uppercase letter</li>
-          <li>At least 1 number</li>
-          <li>At least 1 special character</li>
-        </ul>
-
-        <button className="btn btn-success w-100">
-          Reset Password
-        </button>
-      </form>
-    </div>
+          <Button type="submit" className="w-100">
+            Reset Password
+          </Button>
+        </Form>
+      </Card>
+    </Container>
   );
 };
 
