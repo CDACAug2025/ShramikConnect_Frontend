@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Form, Badge, Spinner, Alert, ListGroup } from 'react-bootstrap';
 import { workerApi } from '../services/workerDashboardApi';
-import WorkerNavbar from '../components/WorkerNavbar';
+
 
 const WorkerProfilePage = () => {
     const [profile, setProfile] = useState(null);

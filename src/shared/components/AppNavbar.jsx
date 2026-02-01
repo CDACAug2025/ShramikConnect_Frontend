@@ -69,6 +69,7 @@ const AppNavbar = () => {
                 <Nav.Link as={Link} to="/worker/find-jobs">Find Jobs</Nav.Link>
                 <Nav.Link as={Link} to="/worker/my-applications">Applications</Nav.Link>
                 <Nav.Link as={Link} to="/worker/active-jobs">Active Jobs</Nav.Link>
+                <Nav.Link as={Link} to="/worker/contracts">Contracts</Nav.Link>
                 <Nav.Link as={Link} to="/worker/wallet">Wallet</Nav.Link>
                 <Nav.Link as={Link} to="/worker/history">History</Nav.Link>
               </>
@@ -80,6 +81,7 @@ const AppNavbar = () => {
                 <Nav.Link as={Link} to="/organization/dashboard">Dashboard</Nav.Link>
                 <Nav.Link as={Link} to="/organization/post-job">Post Job</Nav.Link>
                 <Nav.Link as={Link} to="/organization/applications">Applications</Nav.Link>
+                <Nav.Link as={Link} to="/organization/contracts">Contracts</Nav.Link>
                 <Nav.Link as={Link} to="/organization/payments">Payments</Nav.Link>
               </>
             )}

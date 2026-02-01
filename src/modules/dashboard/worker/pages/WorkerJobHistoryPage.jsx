@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Table, Badge, Spinner, Card, Button, Alert } from 'react-bootstrap';
 import { workerApi } from '../services/workerDashboardApi';
-import WorkerNavbar from '../components/WorkerNavbar';
-import WorkerFooter from '../components/WorkerFooter';
+
 
 const WorkerJobHistoryPage = () => {
     const [history, setHistory] = useState([]);

@@ -45,7 +45,7 @@ import ClientContracts from '@/modules/dashboard/client/pages/ClientContracts';
 import CreateClientContract from '@/modules/dashboard/client/pages/CreateClientContract';
 
 // ================= CONTRACTS (SHARED) =================
-import ContractPage from '@/modules/contracts/pages/ContractPage';
+import ContractsPage from '@/modules/contracts/pages/ContractsPage';
 
 // ================= ADMIN =================
 import UsersPage from '@/modules/admin/pages/UsersPage';
@@ -88,7 +88,7 @@ const AppRoutes = () => {
         <Route path="/worker/find-jobs" element={<FindJobsPage />} />
         <Route path="/worker/my-applications" element={<MyApplicationsPage />} />
         <Route path="/worker/active-jobs" element={<ActiveJobsPage />} />
-        <Route path="/worker/contracts" element={<ContractPage />} />
+        <Route path="/worker/contracts" element={<ContractsPage />} />
         <Route path="/worker/profile" element={<WorkerProfilePage />} />
         <Route path="/worker/skills" element={<WorkerSkillsPage />} />
         <Route path="/worker/history" element={<WorkerJobHistoryPage />} />
@@ -101,7 +101,7 @@ const AppRoutes = () => {
         <Route path="/organization/profile" element={<OrganizationProfile />} />
         <Route path="/organization/post-job" element={<OrganizationPostJob />} />
         <Route path="/organization/applications" element={<OrganizationApplications />} />
-        <Route path="/organization/contracts" element={<ContractPage />} />
+        <Route path="/organization/contracts" element={<ContractsPage />} />
         <Route path="/organization/payments" element={<OrganizationPayments />} />
 
         {/* ---------- CLIENT ---------- */}

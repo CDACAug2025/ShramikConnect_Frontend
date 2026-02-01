@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Badge, Form, Spinner, Alert, InputGroup, Modal } from 'react-bootstrap';
 import { workerApi } from '../services/workerDashboardApi';
-import WorkerNavbar from '../components/WorkerNavbar';
-import WorkerFooter from '../components/WorkerFooter';
+
 
 const FindJobsPage = () => {
     const [jobs, setJobs] = useState([]);
