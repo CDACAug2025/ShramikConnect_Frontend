@@ -7,6 +7,8 @@ import { clearAuth, getAuth } from './shared/utils/authUtils';
 const App = () => {
   useEffect(() => {
     const { token, name } = getAuth();
+    localStorage.clear(); 
+    console.log("Application restarted: Storage cleared.");
     
     /**
      * ✅ Session Sanitizer

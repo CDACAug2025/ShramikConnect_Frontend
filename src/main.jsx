@@ -8,6 +8,8 @@ import { BrowserRouter } from 'react-router-dom';
 // ✅ ADD THIS LINE to make the Navbar Toggle work!
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'; 
 
+localStorage.clear();
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
