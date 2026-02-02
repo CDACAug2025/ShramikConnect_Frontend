@@ -6,11 +6,9 @@ const MainLayout = () => {
   return (
     <div className="d-flex flex-column min-vh-100">
       <AppNavbar />
-
       <main className="flex-fill">
         <Outlet />
       </main>
-
       <AppFooter />
     </div>
   );

@@ -1,47 +1,79 @@
+// hooks/useAuth.js
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { loginApi } from '../services/authApi';
 import { saveToken, clearToken } from '@/shared/utils/tokenUtils';
+import { clearAuth } from '@/shared/utils/authUtils';
 
 export const useAuth = () => {
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const login = async (credentials) => {
     try {
       setLoading(true);
-      const response = await loginApi(credentials);
-      saveToken(response.token);
 
-      if (response.kycStatus === 'PENDING') {
-        window.location.href = '/kyc-pending';
+      const data = await loginApi(credentials);
+
+      console.log("Login Successful:", data);
+
+      saveToken(data.token);
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userRole', data.role);
+      localStorage.setItem('userName', data.fullName || '');
+      localStorage.setItem('userId', data.userId);
+
+      // 🚦 EMAIL CHECK
+      if (data.emailStatus !== 'VERIFIED') {
+        navigate('/verify-email');
         return;
       }
-      switch (response.role) {
+
+      // 🪪 KYC CHECK
+      if (data.kycStatus !== 'APPROVED') {
+        navigate('/kyc-pending');
+        return;
+      }
+
+      // 🔐 ACCOUNT STATUS
+      if (data.accountStatus !== 'ACTIVE') {
+        navigate('/login');
+        return;
+      }
+
+      // 🚀 ROLE BASED REDIRECT
+      switch (data.role) {
         case 'WORKER':
-          window.location.href = '/dashboard/worker';
+          navigate('/worker/dashboard');
           break;
         case 'CLIENT':
-          window.location.href = '/dashboard/client';
+          navigate('/client/dashboard');
           break;
         case 'ORGANIZATION':
-          window.location.href = '/dashboard/organization';
+          navigate('/organization/dashboard');
           break;
         case 'SUPERVISOR':
-          window.location.href = '/dashboard/supervisor';
+          navigate('/supervisor/dashboard');
+          break;
+        case 'ADMIN':
+          navigate('/admin/users');
           break;
         default:
-          window.location.href = '/';
+          navigate('/');
       }
     } catch (err) {
-      alert('Invalid credentials');
+      alert(err.response?.data?.message || 'Invalid credentials');
     } finally {
       setLoading(false);
     }
   };
 
-
   const logout = () => {
     clearToken();
-    window.location.href = '/login';
+    clearAuth();
+    localStorage.clear();
+    navigate('/login');
   };
 
   return { login, logout, loading };
