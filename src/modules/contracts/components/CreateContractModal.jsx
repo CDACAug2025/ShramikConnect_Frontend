@@ -1,15 +1,17 @@
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, InputGroup, Spinner } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { createContractApi } from "../services/contractApi";
 import { toast } from "react-toastify";
+import { Briefcase, User, IndianRupee, ShieldCheck, AlertCircle } from "lucide-react";
 
 const CreateContractModal = ({ show, onHide, application }) => {
   const [amount, setAmount] = useState("");
-  console.log("APPLICATION OBJECT:", application);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (application) {
       setAmount("");
+      setIsSubmitting(false);
     }
   }, [application]);
 
@@ -17,13 +19,14 @@ const CreateContractModal = ({ show, onHide, application }) => {
 
   const handleCreate = async () => {
     try {
+      setIsSubmitting(true);
       await createContractApi({
-        jobId: application.jobId,        // ✅ CORRECT
-        workerId: application.workerId,  // ✅ CORRECT
+        jobId: application.jobId,
+        workerId: application.workerId,
         agreedAmount: Number(amount),
       });
 
-      toast.success("Contract created. Negotiation started");
+      toast.success("Contract successfully initialized");
       onHide();
     } catch (err) {
       if (
@@ -31,55 +34,96 @@ const CreateContractModal = ({ show, onHide, application }) => {
         err.response.status === 403 &&
         err.response.data?.message?.includes("Contract already exists")
       ) {
-        toast.info("Contract already exists. Redirecting to contracts...");
+        toast.info("An active contract already exists for this application");
         onHide();
-        // optional navigation
-        // navigate("/contracts");
       } else {
-        toast.error("Failed to create contract");
+        toast.error("Process failed. Please verify amount and try again.");
       }
+    } finally {
+      setIsSubmitting(false);
     }
-
   };
 
   return (
-    <Modal show={show} onHide={onHide} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Create Contract</Modal.Title>
+    <Modal show={show} onHide={onHide} centered backdrop="static">
+      <Modal.Header closeButton className="border-0 pb-0">
+        <Modal.Title className="fw-bold d-flex align-items-center gap-2">
+          <div className="bg-primary bg-opacity-10 p-2 rounded-3 text-primary">
+            <ShieldCheck size={24} />
+          </div>
+          Initialize Contract
+        </Modal.Title>
       </Modal.Header>
 
-      <Modal.Body>
-        <p>
-          <b>Job:</b> {application.jobTitle}
-        </p>
-        <p>
-          <b>Worker:</b> {application.workerName}
-        </p>
+      <Modal.Body className="pt-4">
+        {/* Deal Summary Card */}
+        <div className="bg-light p-3 rounded-4 mb-4 border border-light-subtle">
+          <h6 className="text-muted text-uppercase small fw-bold mb-3 ls-wide">Agreement Details</h6>
+          <div className="d-flex align-items-center mb-2">
+            <Briefcase size={16} className="text-muted me-2" />
+            <span className="text-dark fw-semibold">{application.jobTitle}</span>
+          </div>
+          <div className="d-flex align-items-center text-muted">
+            <User size={16} className="me-2" />
+            <span>Worker: <strong className="text-dark">{application.workerName}</strong></span>
+          </div>
+        </div>
 
-        <Form.Group className="mt-3">
-          <Form.Label>Agreed Amount (₹)</Form.Label>
-          <Form.Control
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="Enter amount"
-            min="1"
-          />
+        {/* Input Section */}
+        <Form.Group className="mb-3">
+          <Form.Label className="fw-bold small text-muted text-uppercase ls-wide">
+            Final Agreed Compensation
+          </Form.Label>
+          <InputGroup size="lg" className="shadow-sm overflow-hidden rounded-3 border">
+            <InputGroup.Text className="bg-white border-0">
+              <IndianRupee size={18} className="text-success" />
+            </InputGroup.Text>
+            <Form.Control
+              type="number"
+              className="border-0 ps-0"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="e.g. 15000"
+              min="1"
+              disabled={isSubmitting}
+            />
+          </InputGroup>
+          <Form.Text className="text-muted d-flex align-items-center mt-2 gap-1">
+            <AlertCircle size={14} /> This amount will be sent for worker's digital signature.
+          </Form.Text>
         </Form.Group>
       </Modal.Body>
 
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
-          Cancel
+      <Modal.Footer className="border-0 pt-0 pb-4 px-4">
+        <Button 
+            variant="link" 
+            className="text-muted text-decoration-none me-auto" 
+            onClick={onHide}
+            disabled={isSubmitting}
+        >
+          Discard
         </Button>
         <Button
           variant="primary"
+          size="lg"
+          className="rounded-pill px-4 fw-bold shadow-sm d-flex align-items-center gap-2"
           onClick={handleCreate}
-          disabled={!amount}
+          disabled={!amount || amount <= 0 || isSubmitting}
         >
-          Start Negotiation
+          {isSubmitting ? (
+            <>
+              <Spinner size="sm" animation="border" /> Initializing...
+            </>
+          ) : (
+            "Send Agreement"
+          )}
         </Button>
       </Modal.Footer>
+
+      <style>{`
+        .ls-wide { letter-spacing: 0.05rem; }
+        .form-control:focus { box-shadow: none; }
+      `}</style>
     </Modal>
   );
 };

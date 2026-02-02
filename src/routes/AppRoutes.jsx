@@ -60,6 +60,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* 🟢 PUBLIC ROUTES */}
+      <Route element={<ProtectedRoute publicOnly={true} />}>
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
@@ -68,6 +69,7 @@ const AppRoutes = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+      </Route>
       </Route>
 
       {/* 👷 WORKER PROTECTED ROUTES */}
