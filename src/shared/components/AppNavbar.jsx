@@ -1,23 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Navbar, Nav, Container, NavDropdown, Badge, Dropdown } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
-import { getAuth, clearAuth } from '@/shared/utils/authUtils';
-import { clearToken } from '@/shared/utils/tokenUtils';
-import axiosInstance from '@/services/axiosInstance';
+import React, { useState, useEffect } from "react";
+import {
+  Navbar,
+  Nav,
+  Container,
+  NavDropdown,
+  Badge,
+  Dropdown,
+  Button,
+} from "react-bootstrap";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { getAuth, clearAuth } from "@/shared/utils/authUtils";
+import axiosInstance from "@/services/axiosInstance";
+import { useWorkerCart } from "@/modules/dashboard/worker/hooks/useWorkerCart"; // ✅ Import Cart Hook
 
 const AppNavbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { token, role, name } = getAuth();
   const [notifications, setNotifications] = useState([]);
 
-  // ✅ FIXED: Fetch alerts without double '/api' prefix
+  // ✅ Access cart data for the badge
+  const { cart } = useWorkerCart();
+
   const fetchAlerts = async () => {
     if (!token) return;
     try {
-      const res = await axiosInstance.get('/notifications/unread');
+      const res = await axiosInstance.get("/notifications/unread");
       setNotifications(res.data || []);
     } catch (err) {
-      console.error("Alert sync failed:", err);
+      console.error("Notification sync failed");
     }
   };
 
@@ -28,86 +39,495 @@ const AppNavbar = () => {
   }, [token]);
 
   const handleLogout = () => {
-    clearToken();
     clearAuth();
-    navigate('/login');
+    navigate("/login");
   };
 
+  const isActive = (path) => location.pathname === path;
+
+  // ✅ Role Check Helpers
+  const isAdmin = token && role === "ADMIN";
+  const isWorker = token && role === "WORKER";
+  const isClient = token && role === "CLIENT";
+  const isSupervisor = token && role === "SUPERVISOR";
+  const isOrg = token && role === "ORGANIZATION";
+
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" sticky="top" className="shadow-sm">
+    <Navbar
+      expand="lg"
+      sticky="top"
+      className="shadow-sm py-3"
+      style={{ background: "#0f172a", borderBottom: "1px solid #1e293b" }}
+      variant="dark"
+    >
       <Container>
-        <Navbar.Brand as={Link} to="/">ShramikConnect</Navbar.Brand>
-        <Navbar.Toggle />
-        <Navbar.Collapse>
-          <Nav className="me-auto">
-            {/* ---------- PUBLIC ---------- */}
+        <Navbar.Brand
+          as={Link}
+          to={
+            isAdmin
+              ? "/admin/dashboard"
+              : isSupervisor
+                ? "/supervisor/dashboard"
+                : isOrg
+                  ? "/organization/home"
+                  : isWorker
+                    ? "/worker/dashboard"
+                    : isClient
+                      ? "/client/dashboard"
+                      : "/"
+          }
+          className="fw-bold fs-4"
+        >
+          <span className="text-warning me-2">Shramik</span>Connect
+          {isAdmin && (
+            <Badge
+              bg="warning"
+              text="dark"
+              className="ms-2 small fw-bold"
+              style={{ fontSize: "0.6rem" }}
+            >
+              ADMIN
+            </Badge>
+          )}
+          {isSupervisor && (
+            <Badge
+              bg="danger"
+              text="white"
+              className="ms-2 small fw-bold"
+              style={{ fontSize: "0.6rem" }}
+            >
+              SUP
+            </Badge>
+          )}
+          {isOrg && (
+            <Badge
+              bg="primary"
+              text="white"
+              className="ms-2 small fw-bold"
+              style={{ fontSize: "0.6rem" }}
+            >
+              ORG
+            </Badge>
+          )}
+          {isWorker && (
+            <Badge
+              bg="info"
+              text="dark"
+              className="ms-2 small fw-bold"
+              style={{ fontSize: "0.6rem" }}
+            >
+              WORKER
+            </Badge>
+          )}
+          {isClient && (
+            <Badge
+              bg="success"
+              text="white"
+              className="ms-2 small fw-bold"
+              style={{ fontSize: "0.6rem" }}
+            >
+              CLIENT
+            </Badge>
+          )}
+        </Navbar.Brand>
+
+        <Navbar.Toggle aria-controls="basic-navbar-nav" className="border-0" />
+
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto ms-lg-4 gap-2">
+            {/* 🌍 PUBLIC LINKS */}
             {!token && (
               <>
-                <Nav.Link as={Link} to="/">Home</Nav.Link>
-                <Nav.Link as={Link} to="/about">About</Nav.Link>
-                <Nav.Link as={Link} to="/contact">Contact</Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/"
+                  className={isActive("/") ? "text-warning fw-bold" : ""}
+                >
+                  Home
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/about"
+                  className={isActive("/about") ? "text-warning fw-bold" : ""}
+                >
+                  About Us
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/contact"
+                  className={isActive("/contact") ? "text-warning fw-bold" : ""}
+                >
+                  Contact Us
+                </Nav.Link>
               </>
             )}
 
-            {/* ---------- WORKER ---------- */}
-            {role === 'WORKER' && (
+            {/* 🛡️ ADMIN ROUTES */}
+            {isAdmin && (
               <>
-                <Nav.Link as={Link} to="/worker/dashboard">Dashboard</Nav.Link>
-                <Nav.Link as={Link} to="/worker/active-jobs">Active Jobs</Nav.Link>
-                <Nav.Link as={Link} to="/worker/my-applications">My Applications</Nav.Link>
-                
-               
-                <Nav.Link as={Link} to="/worker/find-jobs">Find Job</Nav.Link>
-                
-                <Nav.Link as={Link} to="/worker/wallet">Wallet</Nav.Link>
-                <Nav.Link as={Link} to="/worker/history">History</Nav.Link>
+                <div className="vr d-none d-lg-block mx-2 text-warning opacity-25"></div>
+                <Nav.Link
+                  as={Link}
+                  to="/admin/dashboard"
+                  className={
+                    isActive("/admin/dashboard") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  Monitoring
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/admin/users"
+                  className={
+                    isActive("/admin/users") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  Users
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/admin/inventory"
+                  className={
+                    isActive("/admin/inventory") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  Inventory
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/admin/payments"
+                  className={
+                    isActive("/admin/payments") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  Ledger
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/admin/settings"
+                  className={
+                    isActive("/admin/settings") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  Settings
+                </Nav.Link>
+                <Nav.Link
+  as={Link}
+  to="/admin/orders"
+  className={isActive("/admin/orders") ? "text-warning fw-bold" : ""}
+>
+  <i className="bi bi-clipboard-data me-1"></i> Worker Orders
+</Nav.Link>
               </>
             )}
 
-            {/* ---------- CLIENT / ORGANIZATION (Add others as needed) ---------- */}
-            {role === 'CLIENT' && (
+            {/* 👨‍✈️ SUPERVISOR ROUTES */}
+            {isSupervisor && (
               <>
-                <Nav.Link as={Link} to="/client/dashboard">Dashboard</Nav.Link>
-                <Nav.Link as={Link} to="/client/post-job">Post Job</Nav.Link>
-                <Nav.Link as={Link} to="/client/contracts">Contracts</Nav.Link>
+                <div className="vr d-none d-lg-block mx-2 text-danger opacity-25"></div>
+                <Nav.Link
+                  as={Link}
+                  to="/supervisor/dashboard"
+                  className={
+                    isActive("/supervisor/dashboard")
+                      ? "text-warning fw-bold"
+                      : ""
+                  }
+                >
+                  Dashboard
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/supervisor/kyc-list"
+                  className={
+                    isActive("/supervisor/kyc-list")
+                      ? "text-warning fw-bold"
+                      : ""
+                  }
+                >
+                  KYC Registry
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/supervisor/disputes"
+                  className={
+                    isActive("/supervisor/disputes")
+                      ? "text-warning fw-bold"
+                      : ""
+                  }
+                >
+                  Disputes
+                </Nav.Link>
               </>
             )}
-            
-            {/* ... other roles (Admin, Supervisor) remain the same ... */}
+
+            {/* 🏢 ORGANIZATION ROUTES */}
+            {isOrg && (
+              <>
+                <div className="vr d-none d-lg-block mx-2 text-primary opacity-25"></div>
+                <Nav.Link
+                  as={Link}
+                  to="/organization/home"
+                  className={
+                    isActive("/organization/home") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  Home
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/organization/post-job"
+                  className={
+                    isActive("/organization/post-job")
+                      ? "text-warning fw-bold"
+                      : ""
+                  }
+                >
+                  Post Job
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/organization/applications"
+                  className={
+                    isActive("/organization/applications")
+                      ? "text-warning fw-bold"
+                      : ""
+                  }
+                >
+                  Applicants
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/organization/payments"
+                  className={
+                    isActive("/organization/payments")
+                      ? "text-warning fw-bold"
+                      : ""
+                  }
+                >
+                  Payments
+                </Nav.Link>
+              </>
+            )}
+
+            {/* 👷 WORKER ROUTES */}
+            {isWorker && (
+              <>
+                <div className="vr d-none d-lg-block mx-2 text-info opacity-25"></div>
+                <Nav.Link
+                  as={Link}
+                  to="/worker/dashboard"
+                  className={
+                    isActive("/worker/dashboard") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  Dashboard
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/worker/find-jobs"
+                  className={
+                    isActive("/worker/find-jobs") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  Find Jobs
+                </Nav.Link>
+
+                {/* ✅ Added Equipment Store Link */}
+                <Nav.Link
+                  as={Link}
+                  to="/worker/store"
+                  className={
+                    isActive("/worker/store") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  <i className="bi bi-shop me-1"></i> Equipment Store
+                </Nav.Link>
+
+                <Nav.Link
+                  as={Link}
+                  to="/worker/active-jobs"
+                  className={
+                    isActive("/worker/active-jobs")
+                      ? "text-warning fw-bold"
+                      : ""
+                  }
+                >
+                  Active Work
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/worker/wallet"
+                  className={
+                    isActive("/worker/wallet") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  Wallet
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/worker/my-orders"
+                  className={
+                    isActive("/worker/my-orders") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  {" "}
+                  <i className="bi bi-bag-check me-1"></i> My Orders
+                </Nav.Link>
+              </>
+            )}
+
+            {/* 🤝 CLIENT ROUTES */}
+            {isClient && (
+              <>
+                <div className="vr d-none d-lg-block mx-2 text-success opacity-25"></div>
+                <Nav.Link
+                  as={Link}
+                  to="/client/dashboard"
+                  className={
+                    isActive("/client/dashboard") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  Dashboard
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/client/post-job"
+                  className={
+                    isActive("/client/post-job") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  Post Job
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/client/my-jobs"
+                  className={
+                    isActive("/client/my-jobs") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  My Postings
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/client/contracts"
+                  className={
+                    isActive("/client/contracts") ? "text-warning fw-bold" : ""
+                  }
+                >
+                  Contracts
+                </Nav.Link>
+              </>
+            )}
           </Nav>
 
+          {/* ✅ GLOBAL ACCOUNT ACTIONS */}
           <Nav className="align-items-center gap-3">
-            {token && (
+            {!token ? (
+              <Button
+                as={Link}
+                to="/login"
+                variant="warning"
+                className="rounded-pill px-4 fw-bold border-0 shadow-sm"
+                style={{ color: "#000" }}
+              >
+                Login
+              </Button>
+            ) : (
               <>
-                {/* 🔔 NOTIFICATION BELL */}
+                {/* ✅ Worker-specific Cart Preview */}
+                {isWorker && (
+                  <Nav.Link
+                    as={Link}
+                    to="/worker/store"
+                    className="position-relative p-0 me-2"
+                  >
+                    <i className="bi bi-cart3 fs-5 text-white-50"></i>
+                    {cart.length > 0 && (
+                      <Badge
+                        pill
+                        bg="warning"
+                        text="dark"
+                        className="position-absolute top-0 start-100 translate-middle"
+                        style={{ fontSize: "0.55rem" }}
+                      >
+                        {cart.length}
+                      </Badge>
+                    )}
+                  </Nav.Link>
+                )}
+
                 <Dropdown align="end">
-                  <Dropdown.Toggle variant="transparent" className="p-0 border-0 position-relative no-caret">
+                  <Dropdown.Toggle
+                    variant="transparent"
+                    className="p-0 border-0 no-caret"
+                  >
                     <i className="bi bi-bell-fill fs-5 text-white-50"></i>
                     {notifications.length > 0 && (
-                      <Badge pill bg="danger" className="position-absolute top-0 start-100 translate-middle border border-2 border-dark" style={{ fontSize: '0.6rem' }}>
+                      <Badge
+                        pill
+                        bg="danger"
+                        className="position-absolute top-0 start-100 translate-middle"
+                        style={{ fontSize: "0.5rem" }}
+                      >
                         {notifications.length}
                       </Badge>
                     )}
                   </Dropdown.Toggle>
-                  <Dropdown.Menu className="shadow-lg border-0 mt-3" style={{ width: '280px' }}>
-                    <div className="p-3 border-bottom fw-bold small">Notifications</div>
-                    {notifications.length > 0 ? notifications.map(n => (
-                      <Dropdown.Item key={n.id} className="p-3 small border-bottom text-wrap">{n.message}</Dropdown.Item>
-                    )) : <div className="p-3 text-center text-muted small">No new messages</div>}
+                  <Dropdown.Menu
+                    className="dropdown-menu-dark shadow border-0 mt-3"
+                    style={{ background: "#1e293b" }}
+                  >
+                    <div className="p-2 px-3 small fw-bold border-bottom border-secondary text-white-50">
+                      System Alerts
+                    </div>
+                    {notifications.length > 0 ? (
+                      notifications.map((n) => (
+                        <Dropdown.Item key={n.id} className="small py-2">
+                          {n.message}
+                        </Dropdown.Item>
+                      ))
+                    ) : (
+                      <div className="p-3 text-center text-muted small">
+                        No new updates
+                      </div>
+                    )}
                   </Dropdown.Menu>
                 </Dropdown>
 
-                <NavDropdown title={name || 'Account'} align="end">
-                  <NavDropdown.Item as={Link} to={`/${role?.toLowerCase()}/profile`}>Profile</NavDropdown.Item>
+                <NavDropdown
+                  title={
+                    <span className="text-white">
+                      <i
+                        className={`bi ${isAdmin || isSupervisor ? "bi-shield-lock-fill text-warning" : isOrg ? "bi-building text-info" : "bi-person-circle text-warning"} me-2`}
+                      ></i>
+                      {name || "Account"}
+                    </span>
+                  }
+                  align="end"
+                >
+                  <NavDropdown.Item
+                    as={Link}
+                    to={
+                      isAdmin
+                        ? "/admin/settings"
+                        : isOrg
+                          ? "/organization/profile"
+                          : isWorker
+                            ? "/worker/profile"
+                            : "/client/profile"
+                    }
+                  >
+                    Security & Profile
+                  </NavDropdown.Item>
                   <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={handleLogout} className="text-danger">Logout</NavDropdown.Item>
+                  <NavDropdown.Item
+                    onClick={handleLogout}
+                    className="text-danger fw-bold"
+                  >
+                    <i className="bi bi-power me-2"></i>Logout
+                  </NavDropdown.Item>
                 </NavDropdown>
-              </>
-            )}
-            {!token && (
-              <>
-                <Nav.Link as={Link} to="/login">Login</Nav.Link>
-                <Nav.Link as={Link} to="/register">Register</Nav.Link>
               </>
             )}
           </Nav>

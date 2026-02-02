@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Form, Badge, Spinner, Alert, ListGroup } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Form, Badge, Spinner, Alert, ListGroup, ProgressBar } from 'react-bootstrap';
 import { workerApi } from '../services/workerDashboardApi';
-import WorkerNavbar from '../components/WorkerNavbar';
 
 const WorkerProfilePage = () => {
     const [profile, setProfile] = useState(null);
@@ -10,9 +9,7 @@ const WorkerProfilePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Full list of districts from your Enum
     const districts = ["MUMBAI_CITY", "MUMBAI_SUBURBAN", "THANE", "PALGHAR", "RAIGAD", "PUNE", "SATARA", "SOLAPUR", "KOLHAPUR", "SANGLI", "NASHIK", "AHMEDNAGAR", "DHULE", "JALGAON", "NANDURBAR", "AURANGABAD", "JALNA", "BEED", "OSMANABAD", "LATUR", "NANDED", "PARBHANI", "HINGOLI", "AKOLA", "AMRAVATI", "BULDHANA", "WASHIM", "YAVATMAL", "NAGPUR", "WARDHA", "BHANDARA", "GONDIA", "CHANDRAPUR", "GADCHIROLI", "RATNAGIRI", "SINDHUDURG"];
-    
     const jobCategories = ["PLUMBING", "ELECTRICAL", "CONSTRUCTION", "CARPENTRY", "CLEANING", "PAINTING", "GARDENING", "LABOR", "OTHER"];
 
     useEffect(() => {
@@ -27,9 +24,7 @@ const WorkerProfilePage = () => {
             setProfile(res.data);
             setFormData(res.data);
         } catch (err) {
-            console.error("Profile Error:", err);
-            // ✅ Handle 404 professionally
-            setError("Worker details not found in the professional registry. Please update your profile to register.");
+            setError("Worker details not found in the professional registry.");
         } finally {
             setLoading(false);
         }
@@ -48,7 +43,7 @@ const WorkerProfilePage = () => {
     };
 
     const handleDeactivate = async () => {
-        if (window.confirm("Soft Delete: This will deactivate your account and hide your profile. Proceed?")) {
+        if (window.confirm("Soft Delete: This will deactivate your account. Proceed?")) {
             try {
                 await workerApi.deactivateAccount();
                 localStorage.clear();
@@ -59,123 +54,152 @@ const WorkerProfilePage = () => {
         }
     };
 
-    // ✅ EARLY RETURN: Prevents "Cannot read properties of null" error
     if (loading) return (
-        <div className="text-center py-5 vh-100 d-flex flex-column justify-content-center align-items-center">
-            <Spinner animation="grow" variant="primary" />
-            <p className="mt-3 text-muted fw-bold">Synchronizing with Professional Database...</p>
+        <div className="text-center py-5 vh-100 d-flex flex-column justify-content-center align-items-center bg-light">
+            <Spinner animation="border" variant="warning" style={{ width: '3rem', height: '3rem' }} />
+            <p className="mt-3 text-muted fw-bold">Verifying Credentials...</p>
         </div>
     );
 
     return (
-        <div className="bg-light min-vh-100">
-           
-            <Container className="py-5">
-                {/* ✅ Professional Error/Registration Alert */}
+        <div className="bg-light min-vh-100 py-5">
+            <Container>
                 {error && (
-                    <Alert variant="info" className="mb-4 shadow-sm border-0 bg-white">
-                        <i className="bi bi-info-circle-fill me-2 text-primary"></i>
-                        {error} <strong>Click "Update Profile" to begin registration.</strong>
+                    <Alert variant="warning" className="mb-4 shadow-sm border-0 rounded-4">
+                        <i className="bi bi-exclamation-circle-fill me-2"></i>
+                        {error} <strong>Update your profile below to complete registration.</strong>
                     </Alert>
                 )}
 
                 <Row className="justify-content-center">
-                    <Col lg={10}>
-                        <Card className="shadow-sm border-0 rounded-4 overflow-hidden mb-4">
-                            <div className="bg-dark p-4 text-white d-flex justify-content-between align-items-center">
-                                <div className="d-flex align-items-center">
-                                    {/* ✅ Optional Chaining (?.) prevents UI crashes */}
-                                    <div className="bg-primary rounded-circle p-3 me-3 fw-bold fs-4">
-                                        {profile?.full_name?.charAt(0) || "W"}
-                                    </div>
-                                    <div>
-                                        <h3 className="fw-bold mb-0 text-white">{profile?.full_name || "New Worker"}</h3>
-                                        <Badge bg={profile ? "success" : "warning"} className="mt-1 px-3 py-2 shadow-sm">
-                                            {profile ? "VERIFIED WORKER" : "REGISTRATION PENDING"}
-                                        </Badge>
-                                    </div>
-                                </div>
-                                <Button 
-                                    variant={isEditing ? "outline-light" : "primary"} 
-                                    onClick={() => setIsEditing(!isEditing)}
-                                    className="fw-bold px-4 rounded-pill"
-                                >
-                                    {isEditing ? "Cancel" : "Update Profile"}
-                                </Button>
+                    <Col lg={11}>
+                        <Card className="border-0 shadow-lg rounded-4 overflow-hidden">
+                            {/* --- HEADER: Night Slate Gradient --- */}
+                            <div className="p-4 p-md-5 text-white" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
+                                <Row className="align-items-center">
+                                    <Col md={8} className="d-flex align-items-center mb-3 mb-md-0">
+                                        <div className="bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-lg me-4" style={{ width: '80px', height: '80px', fontSize: '2rem' }}>
+                                            {profile?.full_name?.charAt(0) || "W"}
+                                        </div>
+                                        <div>
+                                            <h2 className="fw-bold mb-1">{profile?.full_name || "New Professional"}</h2>
+                                            <div className="d-flex gap-2 align-items-center">
+                                                <Badge bg={profile ? "success" : "warning"} className="px-3 py-2 rounded-pill">
+                                                    {profile ? "VERIFIED PARTNER" : "REGISTRATION INCOMPLETE"}
+                                                </Badge>
+                                                <span className="small text-white-50"><i className="bi bi-geo-alt-fill me-1 text-danger"></i>{profile?.district?.replace('_', ' ') || "Location Pending"}</span>
+                                            </div>
+                                        </div>
+                                    </Col>
+                                    <Col md={4} className="text-md-end">
+                                        <Button 
+                                            variant={isEditing ? "outline-light" : "warning"} 
+                                            onClick={() => setIsEditing(!isEditing)}
+                                            className="fw-bold px-4 py-2 rounded-pill shadow-sm"
+                                            style={!isEditing ? { color: '#000' } : {}}
+                                        >
+                                            {isEditing ? "Cancel Edit" : <><i className="bi bi-pencil-square me-2"></i>Edit Profile</>}
+                                        </Button>
+                                    </Col>
+                                </Row>
                             </div>
 
-                            <Card.Body className="p-4 bg-white">
+                            <Card.Body className="p-4 p-lg-5 bg-white">
                                 <Form onSubmit={handleUpdate}>
-                                    <Row>
-                                        <Col md={6}>
-                                            <h6 className="text-primary fw-bold text-uppercase mb-3 small">Account Identity</h6>
-                                            <ListGroup variant="flush" className="mb-4">
-                                                <ListGroup.Item className="px-0 py-2 border-0 bg-transparent">
-                                                    <small className="text-muted d-block uppercase small fw-bold">Registered Email</small>
-                                                    <span className="fw-bold text-dark">{profile?.email || "N/A"}</span>
-                                                </ListGroup.Item>
-                                                <ListGroup.Item className="px-0 py-2 border-0 bg-transparent">
-                                                    <small className="text-muted d-block uppercase small fw-bold">Contact Number</small>
-                                                    <span className="fw-bold text-dark">{profile?.phone || "N/A"}</span>
-                                                </ListGroup.Item>
-                                            </ListGroup>
-                                            <Button variant="outline-danger" size="sm" className="mt-2" onClick={handleDeactivate}>
-                                                Deactivate Account
-                                            </Button>
+                                    <Row className="gy-4">
+                                        {/* --- Left Side: Account Info --- */}
+                                        <Col lg={5}>
+                                            <h6 className="text-muted fw-bold text-uppercase mb-4 small"><i className="bi bi-person-lines-fill me-2 text-primary"></i>Account Security</h6>
+                                            <div className="bg-light p-4 rounded-4 border border-light shadow-sm">
+                                                <div className="mb-4">
+                                                    <label className="text-muted extra-small d-block mb-1 fw-bold">REGISTERED EMAIL</label>
+                                                    <span className="fw-bold text-dark fs-5">{profile?.email || "N/A"}</span>
+                                                </div>
+                                                <div className="mb-4">
+                                                    <label className="text-muted extra-small d-block mb-1 fw-bold">CONTACT NUMBER</label>
+                                                    <span className="fw-bold text-dark fs-5">{profile?.phone || "N/A"}</span>
+                                                </div>
+                                                <div className="pt-3 border-top">
+                                                    <p className="small text-muted mb-3">Changes to primary identity fields require supervisor approval.</p>
+                                                    <Button variant="outline-danger" size="sm" className="fw-bold rounded-pill px-3" onClick={handleDeactivate}>
+                                                        Deactivate Profile
+                                                    </Button>
+                                                </div>
+                                            </div>
                                         </Col>
-                                        
-                                        <Col md={6} className="border-start ps-4">
-                                            <h6 className="text-primary fw-bold text-uppercase mb-3 small">Professional Preferences</h6>
+
+                                        {/* --- Right Side: Professional Data --- */}
+                                        <Col lg={7} className="ps-lg-5 border-start-lg">
+                                            <h6 className="text-muted fw-bold text-uppercase mb-4 small"><i className="bi bi-briefcase-fill me-2 text-primary"></i>Professional Record</h6>
                                             
-                                            <Form.Group className="mb-3">
-                                                <Form.Label className="small text-muted fw-bold">Job Category</Form.Label>
-                                                {isEditing ? (
-                                                    <Form.Select 
-                                                        value={formData.category} 
-                                                        onChange={(e) => setFormData({...formData, category: e.target.value})}
-                                                        className="border-primary shadow-sm"
-                                                    >
-                                                        <option value="">Select Category...</option>
-                                                        {jobCategories.map(c => <option key={c} value={c}>{c}</option>)}
-                                                    </Form.Select>
-                                                ) : (
-                                                    <Form.Control plaintext readOnly value={profile?.category || "Not Set"} className="fw-bold text-dark" />
-                                                )}
-                                            </Form.Group>
+                                            <Row className="g-4">
+                                                <Col md={6}>
+                                                    <Form.Group>
+                                                        <Form.Label className="small text-muted fw-bold uppercase-label">Primary Skillset</Form.Label>
+                                                        {isEditing ? (
+                                                            <Form.Select 
+                                                                className="rounded-3 py-2 border-primary focus-shadow"
+                                                                value={formData.category} 
+                                                                onChange={(e) => setFormData({...formData, category: e.target.value})}
+                                                            >
+                                                                <option value="">Select Skill...</option>
+                                                                {jobCategories.map(c => <option key={c} value={c}>{c}</option>)}
+                                                            </Form.Select>
+                                                        ) : (
+                                                            <div className="bg-light p-2 px-3 rounded-3 fw-bold text-dark border">{profile?.category || "Not Defined"}</div>
+                                                        )}
+                                                    </Form.Group>
+                                                </Col>
+                                                <Col md={6}>
+                                                    <Form.Group>
+                                                        <Form.Label className="small text-muted fw-bold uppercase-label">Experience (Years)</Form.Label>
+                                                        <Form.Control 
+                                                            type="number" 
+                                                            className={isEditing ? "rounded-3 py-2 border-primary" : "bg-light p-2 px-3 rounded-3 fw-bold border"}
+                                                            readOnly={!isEditing}
+                                                            value={formData.experience_years}
+                                                            onChange={(e) => setFormData({...formData, experience_years: e.target.value})}
+                                                        />
+                                                    </Form.Group>
+                                                </Col>
+                                                <Col md={12}>
+                                                    <Form.Group>
+                                                        <Form.Label className="small text-muted fw-bold uppercase-label">Work District</Form.Label>
+                                                        {isEditing ? (
+                                                            <Form.Select 
+                                                                className="rounded-3 py-2 border-primary"
+                                                                value={formData.district} 
+                                                                onChange={(e) => setFormData({...formData, district: e.target.value})}
+                                                            >
+                                                                <option value="">Select District...</option>
+                                                                {districts.map(d => <option key={d} value={d}>{d.replace('_', ' ')}</option>)}
+                                                            </Form.Select>
+                                                        ) : (
+                                                            <div className="bg-light p-2 px-3 rounded-3 fw-bold text-dark border">
+                                                                <i className="bi bi-map me-2 text-primary"></i>
+                                                                {profile?.district?.replace('_', ' ') || "Not Set"}
+                                                            </div>
+                                                        )}
+                                                    </Form.Group>
+                                                </Col>
+                                            </Row>
 
-                                            <Form.Group className="mb-3">
-                                                <Form.Label className="small text-muted fw-bold">Operating District</Form.Label>
-                                                {isEditing ? (
-                                                    <Form.Select 
-                                                        value={formData.district} 
-                                                        onChange={(e) => setFormData({...formData, district: e.target.value})}
-                                                        className="border-primary shadow-sm"
-                                                    >
-                                                        <option value="">Select District...</option>
-                                                        {districts.map(d => <option key={d} value={d}>{d.replace('_', ' ')}</option>)}
-                                                    </Form.Select>
-                                                ) : (
-                                                    <Form.Control plaintext readOnly value={profile?.district?.replace('_', ' ') || "Not Set"} className="fw-bold text-dark" />
-                                                )}
-                                            </Form.Group>
-
-                                            <Form.Group className="mb-3">
-                                                <Form.Label className="small text-muted fw-bold">Experience (Years)</Form.Label>
-                                                <Form.Control 
-                                                    type="number" 
-                                                    value={formData.experience_years} 
-                                                    onChange={(e) => setFormData({...formData, experience_years: e.target.value})} 
-                                                    readOnly={!isEditing} 
-                                                    className={isEditing ? "border-primary shadow-sm" : "border-0 bg-light fw-bold"} 
-                                                />
-                                            </Form.Group>
+                                            {/* --- KYC Progress Mockup --- */}
+                                            <div className="mt-5 p-4 bg-light rounded-4 border-dashed">
+                                                <div className="d-flex justify-content-between mb-2">
+                                                    <span className="small fw-bold text-muted">PROFILE STRENGTH</span>
+                                                    <span className="small fw-bold text-success">85%</span>
+                                                </div>
+                                                <ProgressBar now={85} variant="success" style={{ height: '8px' }} className="rounded-pill" />
+                                                <p className="extra-small text-muted mt-3 mb-0">Complete your bio and upload skills certification to reach 100%.</p>
+                                            </div>
                                         </Col>
                                     </Row>
 
                                     {isEditing && (
-                                        <div className="text-end mt-4 pt-3 border-top">
-                                            <Button type="submit" variant="success" className="px-5 fw-bold rounded-pill shadow-sm py-2">
-                                                Save Professional Record
+                                        <div className="text-end mt-5 pt-4 border-top">
+                                            <Button type="submit" variant="success" className="px-5 py-2 fw-bold rounded-pill shadow">
+                                                Sync Professional Record
                                             </Button>
                                         </div>
                                     )}
@@ -185,6 +209,14 @@ const WorkerProfilePage = () => {
                     </Col>
                 </Row>
             </Container>
+
+            <style>{`
+                .extra-small { font-size: 0.75rem; letter-spacing: 0.5px; }
+                .uppercase-label { letter-spacing: 0.5px; text-transform: uppercase; }
+                .focus-shadow:focus { box-shadow: 0 0 0 0.25rem rgba(250, 204, 21, 0.2); }
+                .border-dashed { border: 2px dashed #e2e8f0; }
+                @media (min-width: 992px) { .border-start-lg { border-left: 1px solid #eee !important; } }
+            `}</style>
         </div>
     );
 };

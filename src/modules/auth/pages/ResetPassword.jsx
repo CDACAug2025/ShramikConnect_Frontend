@@ -1,86 +1,69 @@
+import React, { useState } from "react";
+import { Container, Card, Form, Button, InputGroup } from "react-bootstrap";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { resetPasswordApi } from "../services/authApi";
-
-const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+import axiosInstance from "@/services/axiosInstance";
+import { toast } from "react-toastify";
 
 const ResetPassword = () => {
-  const [params] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const token = params.get("token");
+  const token = searchParams.get("token"); // Extracts token from URL
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({ newPassword: "", confirmPassword: "" });
+  const [loading, setLoading] = useState(false);
 
-  const validatePassword = () => {
-    if (!passwordRegex.test(password)) {
-      return "Password must be at least 8 characters long and include 1 uppercase letter, 1 number, and 1 special character.";
-    }
-    if (password !== confirmPassword) {
-      return "Passwords do not match.";
-    }
-    return null;
-  };
-
-  const submit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const validationError = validatePassword();
-    if (validationError) {
-      setError(validationError);
-      return;
+    if (formData.newPassword !== formData.confirmPassword) {
+      return toast.error("Passwords do not match!");
     }
 
+    setLoading(true);
     try {
-      await resetPasswordApi(token, password, confirmPassword);
-      alert("Password reset successful. Please login.");
-      navigate("/login");
+      await axiosInstance.post("/auth/reset-password", {
+        token,
+        newPassword: formData.newPassword,
+        confirmPassword: formData.confirmPassword
+      });
+      toast.success("Password reset successful! Redirecting to login...");
+      setTimeout(() => navigate("/login"), 3000);
     } catch (err) {
-      setError(err.response?.data || "Invalid or expired token");
+      toast.error(err.response?.data || "Failed to reset password.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="container mt-5">
-      <h3 className="mb-3">Reset Password</h3>
-
-      <form onSubmit={submit}>
-        <input
-          type="password"
-          className="form-control mb-3"
-          placeholder="New Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-
-        <input
-          type="password"
-          className="form-control mb-3"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-
-        {error && (
-          <div className="alert alert-danger">
-            {error}
-          </div>
-        )}
-
-        <ul className="small text-muted mb-3">
-          <li>Minimum 8 characters</li>
-          <li>At least 1 uppercase letter</li>
-          <li>At least 1 number</li>
-          <li>At least 1 special character</li>
-        </ul>
-
-        <button className="btn btn-success w-100">
-          Reset Password
-        </button>
-      </form>
+    <div className="min-vh-100 d-flex align-items-center bg-light">
+      <Container style={{ maxWidth: "450px" }}>
+        <Card className="shadow-lg border-0 rounded-4 p-4">
+          <Card.Body>
+            <h3 className="fw-bold text-center mb-4">Set New Password</h3>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label className="small fw-bold text-muted">New Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  required
+                  onChange={(e) => setFormData({...formData, newPassword: e.target.value})}
+                />
+              </Form.Group>
+              <Form.Group className="mb-4">
+                <Form.Label className="small fw-bold text-muted">Confirm Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  required
+                  onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                />
+              </Form.Group>
+              <Button type="submit" className="w-100 py-2 fw-bold" disabled={loading}>
+                {loading ? "Updating..." : "Reset Password"}
+              </Button>
+            </Form>
+          </Card.Body>
+        </Card>
+      </Container>
     </div>
   );
 };

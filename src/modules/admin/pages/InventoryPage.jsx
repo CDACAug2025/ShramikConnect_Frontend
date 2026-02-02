@@ -1,18 +1,59 @@
 import React, { useState } from 'react';
 import useInventory from '../hooks/useInventory';
-// import AdminLayout from '../layouts/AdminLayout';
+import { Container, Row, Col, Card, Form, Button, Table, Badge } from 'react-bootstrap';
+import { toast } from 'react-toastify';
+import axiosInstance from '@/services/axiosInstance';
 
 const InventoryPage = () => {
-  const { products, loading, handleDeleteProduct, handleAddProduct, handleUpdateProduct } = useInventory();
-  
-  // Edit Mode State
+  const { products, loading, fetchInventory, handleDeleteProduct } = useInventory();
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
-  
-  // Form State
+  const [selectedFile, setSelectedFile] = useState(null);
   const [newItem, setNewItem] = useState({ name: '', category: 'Tools', price: '', stock: '' });
 
-  // 1. Handle Edit Click
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    
+    // ✅ Create the product JSON part as a Blob with 'application/json' type
+    // This solves the 'HttpMediaTypeNotSupportedException' on the backend
+    const productBlob = new Blob(
+      [JSON.stringify({
+        name: newItem.name,
+        category: newItem.category,
+        price: Number(newItem.price),
+        stock: Number(newItem.stock)
+      })], 
+      { type: 'application/json' }
+    );
+
+    const handleRestock = async (productId, newStock) => {
+    try {
+        await axiosInstance.put(`/admin/products/${productId}/restock`, { stock: newStock });
+        toast.success("Inventory updated!");
+        fetchProducts(); // Refresh list
+    } catch (err) {
+        toast.error("Failed to update stock");
+    }
+};
+    formData.append("product", productBlob);
+    if (selectedFile) formData.append("imageFile", selectedFile);
+
+    try {
+      if (isEditing) {
+        await axiosInstance.put(`/admin/products/${editId}`, formData);
+      } else {
+        await axiosInstance.post('/admin/products', formData);
+      }
+      toast.success("Inventory synchronized successfully.");
+      fetchInventory(); // Refresh the list
+      resetForm();
+    } catch (err) {
+      console.error(err);
+      toast.error("Action failed. Check console for details.");
+    }
+  };
+
   const handleEditClick = (product) => {
     setNewItem({ 
       name: product.name, 
@@ -21,161 +62,78 @@ const InventoryPage = () => {
       stock: product.stock 
     });
     setIsEditing(true);
-    setEditId(product.id);
+    setEditId(product.productId);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // 2. Cancel Edit
-  const handleCancelEdit = () => {
+  const resetForm = () => {
     setNewItem({ name: '', category: 'Tools', price: '', stock: '' });
+    setSelectedFile(null);
     setIsEditing(false);
     setEditId(null);
   };
 
-  // 3. Submit Form (Add or Update)
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (!newItem.name || !newItem.price) return;
-
-    const productData = {
-      ...newItem,
-      price: Number(newItem.price),
-      stock: Number(newItem.stock)
-    };
-
-    if (isEditing) {
-      handleUpdateProduct(editId, productData);
-      handleCancelEdit();
-    } else {
-      handleAddProduct(productData);
-      setNewItem({ name: '', category: 'Tools', price: '', stock: '' });
-    }
-  };
-
-  if (loading) return (
-    
-      <div className="d-flex justify-content-center align-items-center w-100" style={{ minHeight: '60vh' }}>
-        <div className="spinner-border text-primary"></div>
-      </div>
-    
-  );
-
   return (
-    
-      <div className="w-100">
-        <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
-          <div>
-            <h3 className="fw-bold text-dark mb-1">Inventory Management</h3>
-            <p className="text-muted mb-0">Manage your stock and products.</p>
-          </div>
-          <button className="btn btn-primary shadow-sm fw-bold">
-            Export Report
-          </button>
-        </div>
+    <Container className="py-5 bg-light min-vh-100">
+      <h2 className="fw-bold text-dark mb-4">Logistics Management</h2>
+      
+      <Card className="border-0 shadow-sm rounded-4 p-4 mb-5">
+        <Form onSubmit={onSubmit}>
+          <Row className="g-3">
+            <Col md={3}>
+              <Form.Label className="small fw-bold">ASSET NAME</Form.Label>
+              <Form.Control value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} required />
+            </Col>
+            <Col md={3}>
+              <Form.Label className="small fw-bold">CLASSIFICATION</Form.Label>
+              <Form.Select value={newItem.category} onChange={e => setNewItem({...newItem, category: e.target.value})}>
+                <option>Tools</option><option>Safety Gear</option><option>Raw Material</option>
+              </Form.Select>
+            </Col>
+            <Col md={6}>
+              <Form.Label className="small fw-bold">HARDWARE VISUAL</Form.Label>
+              <Form.Control type="file" accept="image/*" onChange={e => setSelectedFile(e.target.files[0])} />
+            </Col>
+            <Col md={4}><Form.Control type="number" placeholder="Price (₹)" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required /></Col>
+            <Col md={4}><Form.Control type="number" placeholder="Stock" value={newItem.stock} onChange={e => setNewItem({...newItem, stock: e.target.value})} required /></Col>
+            <Col md={4}>
+              <Button type="submit" variant={isEditing ? "warning" : "primary"} className="w-100 fw-bold rounded-pill">
+                {isEditing ? "SYNC CHANGES" : "ADD TO REGISTRY"}
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </Card>
 
-        {/* --- FORM SECTION --- */}
-        <div className={`card border-0 shadow-sm rounded-3 mb-4 w-100 ${isEditing ? 'border-primary border-2' : ''}`}>
-          <div className="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-             <h6 className={`fw-bold m-0 ${isEditing ? 'text-primary' : 'text-dark'}`}>
-                {isEditing ? 'Edit Item' : 'Add New Item'}
-             </h6>
-             {isEditing && (
-               <button onClick={handleCancelEdit} className="btn btn-sm btn-secondary">Cancel</button>
-             )}
-          </div>
-          <div className="card-body">
-            <form onSubmit={onSubmit}>
-              <div className="row g-3">
-                <div className="col-12 col-md-3">
-                  <label className="form-label small fw-bold text-secondary">Product Name</label>
-                  <input type="text" className="form-control" placeholder="e.g. Helmet" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} required />
-                </div>
-                <div className="col-12 col-md-3">
-                  <label className="form-label small fw-bold text-secondary">Category</label>
-                  <select className="form-select" value={newItem.category} onChange={e => setNewItem({...newItem, category: e.target.value})}>
-                    <option>Tools</option><option>Safety Gear</option><option>Raw Material</option>
-                  </select>
-                </div>
-                <div className="col-6 col-md-2">
-                  <label className="form-label small fw-bold text-secondary">Price (₹)</label>
-                  <input type="number" className="form-control" placeholder="0" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required />
-                </div>
-                <div className="col-6 col-md-2">
-                  <label className="form-label small fw-bold text-secondary">Stock</label>
-                  <input type="number" className="form-control" placeholder="0" value={newItem.stock} onChange={e => setNewItem({...newItem, stock: e.target.value})} required />
-                </div>
-                <div className="col-12 col-md-2 d-flex align-items-end">
-                  <button type="submit" className={`btn fw-bold w-100 ${isEditing ? 'btn-success' : 'btn-primary'}`}>
-                    {isEditing ? 'Update' : 'Add'}
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        {/* --- TABLE SECTION --- */}
-        <div className="card border-0 shadow-sm rounded-3 overflow-hidden w-100">
-          <div className="table-responsive">
-            <table className="table table-hover align-middle mb-0 text-nowrap w-100">
-              <thead className="bg-light text-secondary small text-uppercase">
-                <tr>
-                  <th className="ps-4 py-3">Product</th>
-                  <th>Category</th>
-                  <th>Price</th>
-                  <th>Stock</th>
-                  <th className="text-end pe-4">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.length > 0 ? products.map((product) => (
-                  <tr key={product.id} className={editId === product.id ? "table-active" : ""}>
-                    <td className="ps-4">
-                      <div className="d-flex align-items-center">
-                        <div className="bg-light rounded-3 d-flex align-items-center justify-content-center me-3" 
-                            style={{ width: '40px', height: '40px', minWidth: '40px' }}>
-                          {product.image ? <img src={product.image} alt="" className="rounded-3" style={{width:'100%'}} /> : <span>📦</span>}
-                        </div>
-                        <div>
-                          <div className="fw-bold text-dark">{product.name}</div>
-                          {editId === product.id && <span className="badge bg-primary">Editing</span>}
-                        </div>
-                      </div>
-                    </td>
-                    <td><span className="badge bg-light text-secondary border">{product.category}</span></td>
-                    <td className="fw-bold">₹{product.price}</td>
-                    <td>
-                      {product.stock > 10 ? <span className="badge bg-success bg-opacity-10 text-success">In Stock</span> : 
-                      <span className="badge bg-danger bg-opacity-10 text-danger">Low Stock</span>}
-                    </td>
-                    <td className="text-end pe-4">
-                      
-                      {/* ✅ BUTTONS WITH TEXT (So they are always visible) */}
-                      <button 
-                        onClick={() => handleEditClick(product)} 
-                        className="btn btn-sm btn-outline-primary me-2"
-                      >
-                        Edit
-                      </button>
-
-                      <button 
-                        onClick={() => handleDeleteProduct(product.id)} 
-                        className="btn btn-sm btn-outline-danger"
-                      >
-                        Delete
-                      </button>
-
-                    </td>
-                  </tr>
-                )) : (
-                  <tr><td colSpan="5" className="text-center py-5 text-muted">No items found.</td></tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    
+      <Card className="border-0 shadow-sm rounded-4 overflow-hidden">
+        <Table hover align="middle" className="mb-0">
+          <thead className="bg-dark text-white">
+            <tr><th className="ps-4">ASSET</th><th>CATEGORY</th><th>VALUATION</th><th>STATUS</th><th className="text-end pe-4">ACTIONS</th></tr>
+          </thead>
+          <tbody>
+            {products.map(p => (
+              <tr key={p.productId}>
+                <td className="ps-4">
+                  <img src={p.image || 'https://via.placeholder.com/40'} alt="" className="rounded-circle me-3" style={{width:'40px', height:'40px', objectFit:'cover'}} />
+                  <span className="fw-bold">{p.name}</span>
+                </td>
+                <td><Badge bg="light" text="dark" className="border">{p.category}</Badge></td>
+                <td>₹{p.price}</td>
+                <td>
+                  <Badge bg={p.stock > 10 ? "success" : "danger"}>
+                    {p.stock > 10 ? "IN STOCK" : `LOW (${p.stock})`}
+                  </Badge>
+                </td>
+                <td className="text-end pe-4">
+                  <Button variant="outline-dark" size="sm" className="me-2" onClick={() => handleEditClick(p)}>EDIT</Button>
+                  <Button variant="outline-danger" size="sm" onClick={() => handleDeleteProduct(p.productId)}>DELETE</Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Card>
+    </Container>
   );
 };
 

@@ -9,7 +9,6 @@ const WalletPage = () => {
     useEffect(() => {
         const fetchWorkerPayments = async () => {
             try {
-                // ✅ Path now matches the SecurityConfig authorized pattern
                 const res = await axiosInstance.get('/api/worker/payments/my-history');
                 setPayments(res.data || []);
             } catch (err) {
@@ -32,7 +31,7 @@ const WalletPage = () => {
 
     if (loading) return (
         <div className="d-flex flex-column justify-content-center align-items-center vh-100 bg-light">
-            <Spinner animation="border" variant="primary" className="mb-3" />
+            <Spinner animation="border" variant="warning" className="mb-3" />
             <h6 className="text-muted fw-bold">Connecting to Secure Vault...</h6>
         </div>
     );
@@ -40,68 +39,112 @@ const WalletPage = () => {
     return (
         <div className="bg-light min-vh-100 py-5">
             <Container>
+                {/* 🚀 Header */}
                 <div className="d-flex justify-content-between align-items-center mb-5">
-                    <h2 className="fw-bold text-dark mb-0">Financial Portfolio</h2>
-                    <Button variant="outline-primary" className="fw-bold px-4 border-2">Statement</Button>
+                    <div>
+                        <h2 className="fw-bold text-dark mb-1">Financial Portfolio</h2>
+                        <p className="text-muted small mb-0">Manage your earnings and track escrow security.</p>
+                    </div>
+                    <Button variant="dark" className="fw-bold px-4 rounded-pill shadow-sm">
+                        <i className="bi bi-file-earmark-arrow-down me-2"></i>Statement
+                    </Button>
                 </div>
 
                 {/* --- METRICS --- */}
                 <Row className="g-4 mb-5">
+                    {/* Main Balance Card */}
                     <Col md={6}>
-                        <Card className="border-0 shadow-sm rounded-4 p-2 text-white" style={{ background: 'linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%)' }}>
-                            <Card.Body>
-                                <span className="small text-uppercase fw-bold opacity-75">Ready to Withdraw</span>
-                                <h1 className="fw-black mb-0 mt-2">₹{totalAvailable.toLocaleString('en-IN')}</h1>
-                                <Button variant="light" className="mt-4 fw-bold px-4 rounded-pill w-100 text-primary" disabled={totalAvailable <= 0}>
+                        <Card className="border-0 shadow-sm rounded-4 overflow-hidden text-white h-100" 
+                              style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
+                            <Card.Body className="p-4">
+                                <div className="d-flex justify-content-between mb-4">
+                                    <span className="small text-uppercase fw-bold text-warning">Ready to Withdraw</span>
+                                    <i className="bi bi-wallet2 fs-4 text-warning"></i>
+                                </div>
+                                <h1 className="fw-black mb-0 display-4">₹{totalAvailable.toLocaleString('en-IN')}</h1>
+                                <p className="small opacity-50 mt-2">Verified earnings available for bank transfer.</p>
+                                <Button 
+                                    variant="warning" 
+                                    className="mt-4 fw-bold px-4 rounded-pill w-100 text-dark border-0 shadow" 
+                                    disabled={totalAvailable <= 0}
+                                >
                                     Withdraw Funds
                                 </Button>
                             </Card.Body>
                         </Card>
                     </Col>
+
+                    {/* Escrow Status Card */}
                     <Col md={6}>
-                        <Card className="border-0 shadow-sm rounded-4 p-2 h-100 border-start border-5 border-warning">
-                            <Card.Body>
-                                <span className="small text-uppercase fw-bold text-muted">Secured in Escrow</span>
-                                {/* ✅ Displays the ₹2,800 from Ajay's dashboard */}
-                                <h1 className="fw-black text-dark mb-0 mt-2">₹{heldInEscrow.toLocaleString('en-IN')}</h1>
-                                <p className="small text-muted mt-3 mb-0">Releases upon client work approval.</p>
+                        <Card className="border-0 shadow-sm rounded-4 p-2 h-100 bg-white border-start border-5 border-warning">
+                            <Card.Body className="p-4">
+                                <div className="d-flex justify-content-between mb-4">
+                                    <span className="small text-uppercase fw-bold text-muted">Secured in Escrow</span>
+                                    <i className="bi bi-shield-lock-fill fs-4 text-warning"></i>
+                                </div>
+                                <h1 className="fw-black text-dark mb-0 display-4">₹{heldInEscrow.toLocaleString('en-IN')}</h1>
+                                <div className="bg-warning bg-opacity-10 p-3 rounded-3 mt-4">
+                                    <p className="small text-dark fw-bold mb-0">
+                                        <i className="bi bi-info-circle-fill me-2"></i>
+                                        These funds are locked by ShramikConnect and will release upon client approval.
+                                    </p>
+                                </div>
                             </Card.Body>
                         </Card>
                     </Col>
                 </Row>
 
-                {/* --- TRANSACTIONS --- */}
-                <Card className="border-0 shadow-sm rounded-4 overflow-hidden">
-                    <Card.Header className="bg-white border-bottom py-3 fw-bold">Recent History</Card.Header>
+                {/* --- TRANSACTION HISTORY --- */}
+                <Card className="border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+                    <Card.Header className="bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                        <h6 className="fw-bold mb-0 text-dark text-uppercase small">Recent Transaction History</h6>
+                        <Badge bg="light" text="dark" className="border">Last 30 Days</Badge>
+                    </Card.Header>
                     <div className="table-responsive">
                         <table className="table table-hover align-middle mb-0">
-                            <thead className="bg-light small fw-bold text-muted text-uppercase">
+                            <thead className="bg-light small fw-bold text-muted text-uppercase" style={{ fontSize: '0.7rem' }}>
                                 <tr>
-                                    <th className="ps-4 py-3">Date</th>
-                                    <th>Status</th>
-                                    <th className="text-end pe-4">Amount</th>
+                                    <th className="ps-4 py-3">Reference & Date</th>
+                                    <th>Security Status</th>
+                                    <th className="text-end pe-4">Credit Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {payments.length > 0 ? payments.map(p => (
                                     <tr key={p.escrowId}>
-                                        <td className="ps-4 text-muted small">{new Date(p.transactionDate).toLocaleDateString()}</td>
+                                        <td className="ps-4">
+                                            <div className="fw-bold text-dark small">REF-{p.escrowId}</div>
+                                            <div className="text-muted extra-small">{new Date(p.transactionDate).toLocaleDateString('en-IN')}</div>
+                                        </td>
                                         <td>
-                                            <Badge pill className={`px-3 py-2 ${p.paymentStatus === 'RELEASED' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'}`}>
-                                                {p.paymentStatus === 'RELEASED' ? '● CLEARED' : '● SECURED'}
+                                            <Badge pill className={`px-3 py-2 fw-bold ${p.paymentStatus === 'RELEASED' ? 'bg-success-subtle text-success border border-success' : 'bg-warning-subtle text-warning border border-warning'}`}>
+                                                <i className={`bi bi-${p.paymentStatus === 'RELEASED' ? 'check-circle-fill' : 'clock-history'} me-2`}></i>
+                                                {p.paymentStatus === 'RELEASED' ? 'CLEARED' : 'HELD IN ESCROW'}
                                             </Badge>
                                         </td>
-                                        <td className="text-end pe-4 fw-bold">₹{p.amount.toLocaleString()}</td>
+                                        <td className="text-end pe-4 fw-bold text-dark fs-5">
+                                            ₹{p.amount.toLocaleString('en-IN')}
+                                        </td>
                                     </tr>
                                 )) : (
-                                    <tr><td colSpan="3" className="text-center py-5 text-muted">No records found.</td></tr>
+                                    <tr>
+                                        <td colSpan="3" className="text-center py-5 text-muted">
+                                            <i className="bi bi-folder-x fs-1 opacity-25 d-block mb-3"></i>
+                                            No financial records found in your vault.
+                                        </td>
+                                    </tr>
                                 )}
                             </tbody>
                         </table>
                     </div>
                 </Card>
             </Container>
-            <style>{`.fw-black { font-weight: 900; }`}</style>
+
+            <style>{`
+                .fw-black { font-weight: 900; }
+                .extra-small { font-size: 0.7rem; }
+                .table-hover tbody tr:hover { background-color: #f8fafc; transition: 0.2s; }
+            `}</style>
         </div>
     );
 };

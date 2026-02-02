@@ -1,127 +1,77 @@
-import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { createContract } from "../services/clientContractService";
-import { toast } from "react-toastify";
-import { getAuth } from "@/shared/utils/authUtils";
+import { Card, Badge, Button, Row, Col } from "react-bootstrap";
 
-const CreateClientContract = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { userId } = getAuth(); // Get actual client ID from auth
-  const clientId = userId || 1; // fallback to 1 if not available
-
-  const [form, setForm] = useState({
-    jobId: "",
-    workerId: "",
-    agreedAmount: "",
-    contractTerms: "",
-    startDate: "",
-    endDate: "",
-  });
-
-  useEffect(() => {
-    if (location.state) {
-      setForm(prev => ({
-        ...prev,
-        jobId: location.state.jobId || "",
-        workerId: location.state.workerId || ""
-      }));
-    }
-  }, [location.state]);
-
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      console.log('Creating contract with data:', form);
-      console.log('Location state:', location.state);
-      console.log('Client ID:', clientId);
-      
-      // Include job title and applicant name from navigation state
-      const contractData = {
-        ...form,
-        jobTitle: location.state?.jobTitle || `Job ${form.jobId}`,
-        applicantName: location.state?.applicantName || `Worker ${location.state?.workerId || 'Unknown'}`
-      };
-      
-      console.log('Contract data being sent:', contractData);
-      
-      await createContract(clientId, contractData);
-      toast.success("Contract created successfully!");
-      navigate('/client/contracts');
-    } catch (error) {
-      console.error('Contract creation error:', error.response?.data || error.message);
-      toast.error("Failed to create contract!");
+const ClientContractCard = ({ contract, onStatusChange }) => {
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'ACTIVE': return { bg: 'success-subtle', text: 'text-success', label: '● ONGOING' };
+      case 'COMPLETED': return { bg: 'primary-subtle', text: 'text-primary', label: '● FINISHED' };
+      case 'DISPUTED': return { bg: 'danger-subtle', text: 'text-danger', label: '● UNDER REVIEW' };
+      default: return { bg: 'secondary-subtle', text: 'text-secondary', label: status };
     }
   };
 
+  const styles = getStatusBadge(contract.status);
+
   return (
-    <div className="container mt-4">
-      <h3>Create Contract</h3>
-      {location.state && (
-        <div className="alert alert-info mb-3">
-          <strong>Job:</strong> {location.state.jobTitle} | <strong>Worker:</strong> {location.state.applicantName}
-        </div>
-      )}
+    <Card className="border-0 shadow-sm rounded-4 overflow-hidden card-hover-subtle">
+      <Card.Body className="p-4">
+        <Row className="align-items-center">
+          <Col lg={8}>
+            <div className="d-flex align-items-center gap-3 mb-3">
+              <Badge className={`${styles.bg} ${styles.text} px-3 py-2 rounded-pill extra-small fw-bold`}>
+                {styles.label}
+              </Badge>
+              <span className="text-muted small">
+                <i className="bi bi-calendar-check me-1"></i> Term: {new Date(contract.startDate).toLocaleDateString()} - {new Date(contract.endDate).toLocaleDateString()}
+              </span>
+            </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Agreed Amount</label>
-          <input 
-            name="agreedAmount" 
-            type="number"
-            value={form.agreedAmount}
-            className="form-control" 
-            onChange={handleChange}
-            required
-          />
-        </div>
-        
-        <div className="mb-3">
-          <label className="form-label">Start Date</label>
-          <input 
-            name="startDate" 
-            type="date" 
-            value={form.startDate}
-            className="form-control" 
-            onChange={handleChange}
-            required
-          />
-        </div>
-        
-        <div className="mb-3">
-          <label className="form-label">End Date</label>
-          <input 
-            name="endDate" 
-            type="date" 
-            value={form.endDate}
-            className="form-control" 
-            onChange={handleChange}
-            required
-          />
-        </div>
+            <h4 className="fw-bold text-dark mb-1">{contract.jobTitle || "Standard Service Engagement"}</h4>
+            <p className="text-primary fw-bold small mb-3">
+              <i className="bi bi-person-badge-fill me-2"></i>Worker: {contract.workerName || `ID: ${contract.workerId}`}
+            </p>
+            
+            <div className="bg-light p-3 rounded-3 border-start border-4 border-warning mb-0">
+              <small className="text-muted d-block fw-bold mb-1 extra-small">CONTRACT TERMS</small>
+              <p className="small text-secondary mb-0 line-clamp-2">{contract.contractTerms}</p>
+            </div>
+          </Col>
 
-        <div className="mb-3">
-          <label className="form-label">Contract Terms</label>
-          <textarea
-            name="contractTerms"
-            value={form.contractTerms}
-            className="form-control"
-            rows="4"
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="d-flex gap-2">
-          <button type="submit" className="btn btn-primary">Create Contract</button>
-          <button type="button" className="btn btn-secondary" onClick={() => navigate('/client/applications')}>Cancel</button>
-        </div>
-      </form>
-    </div>
+          <Col lg={4} className="text-lg-end mt-4 mt-lg-0">
+            <div className="mb-3">
+              <small className="text-muted d-block fw-bold extra-small">ESCROWED AMOUNT</small>
+              <h3 className="fw-bold text-dark mb-0">₹{contract.agreedAmount?.toLocaleString('en-IN')}</h3>
+            </div>
+            
+            {contract.status === 'ACTIVE' && (
+              <div className="d-flex gap-2 justify-content-lg-end">
+                <Button 
+                  variant="warning" 
+                  className="fw-bold px-4 rounded-pill shadow-sm"
+                  onClick={() => onStatusChange(contract.contractId, 'COMPLETED')}
+                >
+                  Authorize Release
+                </Button>
+                <Button 
+                  variant="outline-danger" 
+                  className="fw-bold px-4 rounded-pill"
+                  onClick={() => onStatusChange(contract.contractId, 'DISPUTED')}
+                >
+                  Dispute
+                </Button>
+              </div>
+            )}
+          </Col>
+        </Row>
+      </Card.Body>
+      <style>{`
+        .extra-small { font-size: 0.7rem; letter-spacing: 0.5px; }
+        .card-hover-subtle { transition: transform 0.2s ease; }
+        .card-hover-subtle:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+      `}</style>
+    </Card>
   );
 };
 
-export default CreateClientContract;
+export default ClientContractCard;
