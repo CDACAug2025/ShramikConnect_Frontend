@@ -39,13 +39,13 @@ import ClientDashboardPage from '@/modules/dashboard/client/pages/ClientDashboar
 import ClientProfile from '@/modules/dashboard/client/pages/ClientProfile';
 import PostJob from '@/modules/dashboard/client/pages/PostJob';
 import MyJobs from '@/modules/dashboard/client/pages/MyJobs';
-import WorkerApplications from '@/modules/dashboard/client/pages/WorkerApplications';
+import ClientApplications from '@/modules/dashboard/client/pages/ClientApplications';
 import JobHistory from '@/modules/dashboard/client/pages/JobHistory';
-import ClientContracts from '@/modules/dashboard/client/pages/ClientContracts';
-import CreateClientContract from '@/modules/dashboard/client/pages/CreateClientContract';
+
 
 // ================= CONTRACTS (SHARED) =================
 import ContractsPage from '@/modules/contracts/pages/ContractsPage';
+import CreateContractModal from '@/modules/contracts/components/CreateContractModal';
 
 // ================= ADMIN =================
 import UsersPage from '@/modules/admin/pages/UsersPage';
@@ -102,6 +102,7 @@ const AppRoutes = () => {
         <Route path="/organization/post-job" element={<OrganizationPostJob />} />
         <Route path="/organization/applications" element={<OrganizationApplications />} />
         <Route path="/organization/contracts" element={<ContractsPage />} />
+        <Route path="/organization/contracts/create" element={<CreateContractModal />} />
         <Route path="/organization/payments" element={<OrganizationPayments />} />
 
         {/* ---------- CLIENT ---------- */}
@@ -109,9 +110,9 @@ const AppRoutes = () => {
         <Route path="/client/profile" element={<ClientProfile />} />
         <Route path="/client/post-job" element={<PostJob />} />
         <Route path="/client/my-jobs" element={<MyJobs />} />
-        <Route path="/client/applications" element={<WorkerApplications />} />
-        <Route path="/client/contracts" element={<ClientContracts />} />
-        <Route path="/client/contracts/create" element={<CreateClientContract />} />
+        <Route path="/client/applications" element={<ClientApplications />} />
+        <Route path="/client/contracts" element={<ContractsPage />} />
+        <Route path="/client/contracts/create" element={<CreateContractModal />} />
         <Route path="/client/job-history" element={<JobHistory />} />
 
         {/* ---------- ADMIN ---------- */}

@@ -6,7 +6,7 @@ export const createContractApi = (payload) =>
 export const getMyContractsApi = () =>
   axiosInstance.get('/contracts/my');
 
-export const updateContractStatusApi = (contractId, status) =>
-  axiosInstance.put(`/contracts/${contractId}/status`, null, {
+export const updateContractStatusApi = (id, status) =>
+  axiosInstance.put(`/contracts/${id}/status`, null, {
     params: { status },
   });

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import {
-  getOrganizationApplications,
-  updateApplicationStatus,
-} from "../services/organizationApplicationService";
+  getClientApplications,
+  updateClientApplicationStatus,
+} from "../services/clientApplicationService";
 import CreateContractModal from "../../../contracts/components/CreateContractModal";
 import { toast } from "react-toastify";
 
-const OrganizationApplications = () => {
+const ClientApplications = () => {
   const [applications, setApplications] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedApp, setSelectedApp] = useState(null);
@@ -16,12 +16,12 @@ const OrganizationApplications = () => {
   }, []);
 
   const loadApplications = async () => {
-    const data = await getOrganizationApplications();
+    const data = await getClientApplications();
     setApplications(data || []);
   };
 
   const handleStatus = async (id, status) => {
-    await updateApplicationStatus(id, status);
+    await updateClientApplicationStatus(id, status);
     loadApplications();
   };
 
@@ -36,7 +36,7 @@ const OrganizationApplications = () => {
 
   return (
     <div className="container mt-4">
-      <h3>Organization Applications</h3>
+      <h3>Client Applications</h3>
 
       {applications.map((app) => (
         <div key={app.applicationId} className="card p-3 mb-2">
@@ -60,7 +60,7 @@ const OrganizationApplications = () => {
               className="btn btn-primary btn-sm"
               onClick={() => openContractModal(app)}
             >
-              Make Contract
+              Create Contract
             </button>
           )}
         </div>
@@ -79,4 +79,4 @@ const OrganizationApplications = () => {
   );
 };
 
-export default OrganizationApplications;
+export default ClientApplications;

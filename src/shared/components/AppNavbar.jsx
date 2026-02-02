@@ -92,6 +92,7 @@ const AppNavbar = () => {
                 <Nav.Link as={Link} to="/client/dashboard">Dashboard</Nav.Link>
                 <Nav.Link as={Link} to="/client/post-job">Post Job</Nav.Link>
                 <Nav.Link as={Link} to="/client/my-jobs">My Jobs</Nav.Link>
+                <Nav.Link as={Link} to="/client/applications">Applications</Nav.Link>
                 <Nav.Link as={Link} to="/client/contracts">Contracts</Nav.Link>
                 <Nav.Link as={Link} to="/client/job-history">History</Nav.Link>
               </>

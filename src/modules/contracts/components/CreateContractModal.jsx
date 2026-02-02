@@ -1,14 +1,15 @@
 import { Modal, Button, Form } from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createContractApi } from "../services/contractApi";
 import { toast } from "react-toastify";
 
 const CreateContractModal = ({ show, onHide, application }) => {
   const [amount, setAmount] = useState("");
+  console.log("APPLICATION OBJECT:", application);
 
   useEffect(() => {
-    if (application?.expectedAmount) {
-      setAmount(application.expectedAmount);
+    if (application) {
+      setAmount("");
     }
   }, [application]);
 
@@ -16,19 +17,29 @@ const CreateContractModal = ({ show, onHide, application }) => {
 
   const handleCreate = async () => {
     try {
-      const payload = {
-        jobId: application.jobId,
-        workerId: application.workerId,
-        agreedAmount: amount,
-      };
-
-      await createContractApi(payload);
+      await createContractApi({
+        jobId: application.jobId,        // ✅ CORRECT
+        workerId: application.workerId,  // ✅ CORRECT
+        agreedAmount: Number(amount),
+      });
 
       toast.success("Contract created. Negotiation started");
       onHide();
     } catch (err) {
-      toast.error("Failed to create contract");
+      if (
+        err.response &&
+        err.response.status === 403 &&
+        err.response.data?.message?.includes("Contract already exists")
+      ) {
+        toast.info("Contract already exists. Redirecting to contracts...");
+        onHide();
+        // optional navigation
+        // navigate("/contracts");
+      } else {
+        toast.error("Failed to create contract");
+      }
     }
+
   };
 
   return (
@@ -38,26 +49,21 @@ const CreateContractModal = ({ show, onHide, application }) => {
       </Modal.Header>
 
       <Modal.Body>
-        <p><strong>Application ID:</strong> {application.applicationId}</p>
-
         <p>
-          <strong>Worker:</strong><br />
-          {application.workerName}<br />
-          <small className="text-muted">{application.workerEmail}</small>
+          <b>Job:</b> {application.jobTitle}
+        </p>
+        <p>
+          <b>Worker:</b> {application.workerName}
         </p>
 
-        <p>
-          <strong>Job:</strong><br />
-          {application.jobTitle}
-        </p>
-
-        <Form.Group className="mb-3">
+        <Form.Group className="mt-3">
           <Form.Label>Agreed Amount (₹)</Form.Label>
           <Form.Control
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            placeholder="Enter agreed amount"
+            placeholder="Enter amount"
+            min="1"
           />
         </Form.Group>
       </Modal.Body>
@@ -66,7 +72,11 @@ const CreateContractModal = ({ show, onHide, application }) => {
         <Button variant="secondary" onClick={onHide}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={handleCreate}>
+        <Button
+          variant="primary"
+          onClick={handleCreate}
+          disabled={!amount}
+        >
           Start Negotiation
         </Button>
       </Modal.Footer>
