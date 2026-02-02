@@ -317,71 +317,93 @@ const AppNavbar = () => {
             )}
 
             {/* 👷 WORKER ROUTES */}
-            {isWorker && (
-              <>
-                <div className="vr d-none d-lg-block mx-2 text-info opacity-25"></div>
-                <Nav.Link
-                  as={Link}
-                  to="/worker/dashboard"
-                  className={
-                    isActive("/worker/dashboard") ? "text-warning fw-bold" : ""
-                  }
-                >
-                  Dashboard
-                </Nav.Link>
-                <Nav.Link
-                  as={Link}
-                  to="/worker/find-jobs"
-                  className={
-                    isActive("/worker/find-jobs") ? "text-warning fw-bold" : ""
-                  }
-                >
-                  Find Jobs
-                </Nav.Link>
+{isWorker && (
+  <>
+    <div className="vr d-none d-lg-block mx-2 text-info opacity-25"></div>
 
-                {/* ✅ Added Equipment Store Link */}
-                <Nav.Link
-                  as={Link}
-                  to="/worker/store"
-                  className={
-                    isActive("/worker/store") ? "text-warning fw-bold" : ""
-                  }
-                >
-                  <i className="bi bi-shop me-1"></i> Equipment Store
-                </Nav.Link>
+    <Nav.Link
+      as={Link}
+      to="/worker/dashboard"
+      className={isActive("/worker/dashboard") ? "text-warning fw-bold" : ""}
+    >
+      Dashboard
+    </Nav.Link>
 
-                <Nav.Link
-                  as={Link}
-                  to="/worker/active-jobs"
-                  className={
-                    isActive("/worker/active-jobs")
-                      ? "text-warning fw-bold"
-                      : ""
-                  }
-                >
-                  Active Work
-                </Nav.Link>
-                <Nav.Link
-                  as={Link}
-                  to="/worker/wallet"
-                  className={
-                    isActive("/worker/wallet") ? "text-warning fw-bold" : ""
-                  }
-                >
-                  Wallet
-                </Nav.Link>
-                <Nav.Link
-                  as={Link}
-                  to="/worker/my-orders"
-                  className={
-                    isActive("/worker/my-orders") ? "text-warning fw-bold" : ""
-                  }
-                >
-                  {" "}
-                  <i className="bi bi-bag-check me-1"></i> My Orders
-                </Nav.Link>
-              </>
-            )}
+    <Nav.Link
+      as={Link}
+      to="/worker/find-jobs"
+      className={isActive("/worker/find-jobs") ? "text-warning fw-bold" : ""}
+    >
+      Find Jobs
+    </Nav.Link>
+
+    <Nav.Link
+      as={Link}
+      to="/worker/my-applications"
+      className={isActive("/worker/my-applications") ? "text-warning fw-bold" : ""}
+    >
+      Applications
+    </Nav.Link>
+
+    <Nav.Link
+      as={Link}
+      to="/worker/contracts"
+      className={isActive("/worker/contracts") ? "text-warning fw-bold" : ""}
+    >
+      Contracts
+    </Nav.Link>
+
+    <Nav.Link
+      as={Link}
+      to="/worker/active-jobs"
+      className={isActive("/worker/active-jobs") ? "text-warning fw-bold" : ""}
+    >
+      Active Work
+    </Nav.Link>
+
+    {/* ✅ Compact Dropdown */}
+    <NavDropdown
+      title={
+        <>
+          <i className="bi bi-grid-3x3-gap me-1"></i> Resources
+        </>
+      }
+      id="worker-resources-dropdown"
+      className={
+        isActive("/worker/store") ||
+        isActive("/worker/wallet") ||
+        isActive("/worker/my-orders")
+          ? "text-warning fw-bold"
+          : ""
+      }
+    >
+      <NavDropdown.Item
+        as={Link}
+        to="/worker/store"
+        active={isActive("/worker/store")}
+      >
+        <i className="bi bi-shop me-2"></i> Equipment Store
+      </NavDropdown.Item>
+
+      <NavDropdown.Item
+        as={Link}
+        to="/worker/wallet"
+        active={isActive("/worker/wallet")}
+      >
+        <i className="bi bi-wallet2 me-2"></i> Wallet
+      </NavDropdown.Item>
+
+      <NavDropdown.Item
+        as={Link}
+        to="/worker/my-orders"
+        active={isActive("/worker/my-orders")}
+      >
+        <i className="bi bi-bag-check me-2"></i> My Orders
+      </NavDropdown.Item>
+    </NavDropdown>
+  </>
+)}
+
 
             {/* 🤝 CLIENT ROUTES */}
             {isClient && (
